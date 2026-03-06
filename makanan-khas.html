@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dapur Nusantara - Makanan Khas</title>
+  <link rel="stylesheet" href="css/style.css"/>
+  <style>
+    /* Tombol filter wilayah */
+    .region-tabs {
+      display: flex; flex-wrap: wrap; gap: 0.6rem;
+      justify-content: center; margin-bottom: 2.5rem;
+    }
+    .region-btn {
+      padding: 0.45rem 1.1rem; border-radius: 3px;
+      border: 1.5px solid rgba(196,98,45,0.25);
+      background: white; color: var(--coklat);
+      font-size: 0.82rem; font-weight: 500;
+      cursor: pointer; transition: all 0.25s;
+    }
+    .region-btn:hover,
+    .region-btn.active {
+      background: var(--batik); color: var(--krim);
+      border-color: var(--batik);
+    }
+
+    /* Grid card makanan khas */
+    .khas-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 1.25rem;
+    }
+    @media (max-width: 900px) { .khas-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 560px) { .khas-grid { grid-template-columns: 1fr; } }
+
+    /* Card detail makanan khas (lebih lengkap dari card biasa) */
+    .khas-detail-card {
+      background: white; border-radius: 4px;
+      border: 1px solid rgba(196,98,45,0.1);
+      overflow: hidden;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .khas-detail-card:hover { transform: translateY(-4px); box-shadow: 0 12px 30px rgba(44,26,14,0.11); }
+
+    /* Area gambar di atas card */
+    .khas-detail-img {
+      height: 160px;
+      background: linear-gradient(135deg, var(--rempah), var(--batik));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 3.5rem; position: relative; overflow: hidden;
+    }
+    .khas-detail-img::after {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(44,26,14,0.5) 0%, transparent 50%);
+    }
+    .khas-detail-region {
+      position: absolute; bottom: 8px; left: 10px; z-index: 2;
+      font-size: 0.67rem; font-weight: 700;
+      letter-spacing: 0.07em; text-transform: uppercase;
+      background: rgba(250,243,232,0.9); color: var(--batik);
+      padding: 0.17rem 0.5rem; border-radius: 2px;
+    }
+    .khas-detail-body { padding: 1.1rem; }
+    .khas-detail-title { font-family: 'Playfair Display', serif; font-weight: 700; font-size: 1.05rem; color: var(--batik); margin-bottom: 0.3rem; }
+    .khas-detail-desc  { font-size: 0.83rem; color: rgba(44,26,14,0.6); line-height: 1.65; margin-bottom: 0.85rem; }
+    .khas-detail-meta  { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+
+    /* Info strip statistik */
+    .info-strip {
+      background: var(--batik); padding: 3rem 0;
+      background-image: radial-gradient(ellipse at 80% 50%, rgba(228,168,56,0.15) 0%, transparent 55%);
+    }
+    .info-strip-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.5rem; text-align: center; }
+    @media (max-width: 600px) { .info-strip-grid { grid-template-columns: 1fr; } }
+    .info-strip-num   { font-family: 'Playfair Display', serif; font-size: 2.2rem; font-weight: 700; color: var(--kunyit); }
+    .info-strip-label { font-size: 0.86rem; color: rgba(250,243,232,0.65); margin-top: 0.25rem; }
+  </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="navbar-inner">
+    <a href="index.html" class="navbar-logo">
+      <div class="navbar-logo-icon">DN</div>
+      <div class="navbar-logo-text">Dapur <span>Nusantara</span></div>
+    </a>
+    <ul class="navbar-links">
+      <li><a href="index.html">Beranda</a></li>
+      <li><a href="profil.html">Profil</a></li>
+      <li><a href="makanan-khas.html" class="active">Makanan Khas</a></li>
+      <li><a href="menu.html">Menu</a></li>
+      <li><a href="pemesanan.html">Pemesanan</a></li>
+      <li><a href="kontak.html">Kontak</a></li>
+      <li class="btn-nav-wrap"><a href="pemesanan.html" class="btn-nav">Pesan Sekarang</a></li>
+    </ul>
+    <button class="hamburger" aria-label="Menu">
+      <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
+      </svg>
+    </button>
+  </div>
+  <div class="mobile-menu">
+    <a href="index.html">Beranda</a>
+    <a href="profil.html">Profil</a>
+    <a href="makanan-khas.html">Makanan Khas</a>
+    <a href="menu.html">Menu</a>
+    <a href="pemesanan.html">Pemesanan</a>
+    <a href="kontak.html">Kontak</a>
+    <a href="pemesanan.html" class="btn btn-dark" style="text-align:center">Pesan Sekarang</a>
+  </div>
+</nav>
+
+
+<!-- PAGE HEADER -->
+<header class="page-header">
+  <div class="breadcrumb"><a href="index.html">Beranda</a> > <span>Makanan Khas</span></div>
+  <p class="page-header-label section-label">✦ Kekayaan Kuliner</p>
+  <h1 class="page-header-title">Makanan Khas <em>Nusantara</em></h1>
+  <p class="page-header-sub">Mengenal hidangan ikonik dari berbagai penjuru Indonesia</p>
+  <div class="page-header-wave">
+    <svg viewBox="0 0 1440 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0 60L48 52C96 44 192 28 288 24C384 20 480 28 576 36C672 44 768 52 864 48C960 44 1056 28 1152 24C1248 20 1344 28 1392 32L1440 36V60H0Z" fill="#FAF3E8"/>
+    </svg>
+  </div>
+</header>
+
+
+<!-- INFO STRIP -->
+<div class="info-strip">
+  <div class="container">
+    <div class="info-strip-grid">
+      <div>
+        <div class="info-strip-num">16+</div>
+        <div class="info-strip-label">Daerah Asal Kuliner</div>
+      </div>
+      <div>
+        <div class="info-strip-num">20+</div>
+        <div class="info-strip-label">Resep Autentik</div>
+      </div>
+      <div>
+        <div class="info-strip-num">100%</div>
+        <div class="info-strip-label">Rempah Asli Indonesia</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- SECTION: Daftar Makanan Khas -->
+<section class="section">
+  <div class="container">
+    <div style="text-align:center; margin-bottom:2rem;">
+      <p class="section-label fade-in">✦ Jelajahi</p>
+      <h2 class="section-title fade-in delay-1" style="margin-top:0.4rem">Hidangan dari <em>Seluruh</em> Nusantara</h2>
+      <div class="divider divider-center fade-in delay-2"></div>
+      <p class="section-desc fade-in delay-2" style="max-width:520px; margin: 0.85rem auto 0;">
+        Filter berdasarkan kategori untuk menemukan hidangan favorit Anda.
+      </p>
+    </div>
+
+    <!-- Filter Kategori -->
+    <div class="region-tabs fade-in">
+      <button class="region-btn active" onclick="filterRegion('semua')"      data-region="semua">Semua</button>
+      <button class="region-btn"        onclick="filterRegion('berat')"      data-region="berat">Makanan Berat</button>
+      <button class="region-btn"        onclick="filterRegion('ringan')"     data-region="ringan">Makanan Ringan</button>
+      <button class="region-btn"        onclick="filterRegion('minuman')"    data-region="minuman">Minuman</button>
+    </div>
+
+    <!-- Grid Makanan Khas -->
+    <div class="khas-grid" id="khas-grid">
+
+      <div class="khas-detail-card fade-in khas-item" data-region="berat">
+        <div class="khas-detail-img">
+          <img src="assets/rendang.webp" alt="Rendang Padang"
+               style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;"/>
+          <span class="khas-detail-region">Sumatera Barat</span>
+        </div>
+        <div class="khas-detail-body">
+          <div class="khas-detail-title">Rendang Padang</div>
+          <p class="khas-detail-desc">Daging sapi empuk dimasak dengan 40+ rempah pilihan selama berjam-jam hingga kering. Diakui UNESCO sebagai warisan budaya dunia.</p>
+          <div class="khas-detail-meta">
+            <span class="tag tag-rempah">Pedas</span>
+            <span class="tag tag-batik">Kering</span>
+            <span class="tag tag-daun">Tanpa MSG</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="khas-detail-card fade-in delay-1 khas-item" data-region="ringan">
+        <div class="khas-detail-img">
+          <img src="assets/pempek.webp" alt="Pempek Kapal Selam"
+               style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;"/>
+          <span class="khas-detail-region">Sumatera Selatan</span>
+        </div>
+        <div class="khas-detail-body">
+          <div class="khas-detail-title">Pempek Kapal Selam</div>
+          <p class="khas-detail-desc">Olahan ikan tenggiri segar dengan tepung sagu, berisi telur utuh di dalamnya, disajikan dengan kuah cuka khas yang asam-manis pedas.</p>
+          <div class="khas-detail-meta">
+            <span class="tag tag-daun">Ikan Segar</span>
+            <span class="tag tag-rempah">Asam Manis</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="khas-detail-card fade-in delay-2 khas-item" data-region="berat">
+        <div class="khas-detail-img">
+          <img src="assets/soto-betawi.webp" alt="Soto Betawi"
+               style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;"/>
+          <span class="khas-detail-region">Jakarta</span>
+        </div>
+        <div class="khas-detail-body">
+          <div class="khas-detail-title">Soto Betawi</div>
+          <p class="khas-detail-desc">Soto khas Betawi dengan kuah santan susu yang kaya rasa. Berisi potongan daging sapi, tomat segar, dan emping yang renyah.</p>
+          <div class="khas-detail-meta">
+            <span class="tag tag-daun">Berkuah</span>
+            <span class="tag tag-rempah">Santan</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="khas-detail-card fade-in khas-item" data-region="berat">
+        <div class="khas-detail-img">
+          <img src="assets/nasi-liwet.webp" alt="Nasi Liwet Solo"
+               style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;"/>
+          <span class="khas-detail-region">Jawa Tengah</span>
+        </div>
+        <div class="khas-detail-body">
+          <div class="khas-detail-title">Nasi Liwet Solo</div>
+          <p class="khas-detail-desc">Nasi gurih dimasak dengan santan dan daun salam, disajikan lengkap dengan opor ayam, serundeng kelapa, dan sambal goreng.</p>
+          <div class="khas-detail-meta">
+            <span class="tag tag-daun">Gurih</span>
+            <span class="tag tag-kunyit">Lengkap</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="khas-detail-card fade-in delay-1 khas-item" data-region="berat">
+        <div class="khas-detail-img">
+          <img src="assets/bebek-betutu.webp" alt="Bebek Betutu"
+               style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;"/>
+          <span class="khas-detail-region">Bali</span>
+        </div>
+        <div class="khas-detail-body">
+          <div class="khas-detail-title">Bebek Betutu</div>
+          <p class="khas-detail-desc">Bebek utuh dibumbui base genep khas Bali, dibungkus daun pisang lalu dipanggang perlahan selama 8 jam hingga dagingnya sangat empuk.</p>
+          <div class="khas-detail-meta">
+            <span class="tag tag-rempah">Pedas</span>
+            <span class="tag tag-batik">Premium</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="khas-detail-card fade-in delay-2 khas-item" data-region="berat">
+        <div class="khas-detail-img">
+          <img src="assets/ikan-kuah-kuning.webp" alt="Ikan Kuah Kuning"
+               style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;"/>
+          <span class="khas-detail-region">Maluku</span>
+        </div>
+        <div class="khas-detail-body">
+          <div class="khas-detail-title">Ikan Kuah Kuning</div>
+          <p class="khas-detail-desc">Ikan kakap segar dimasak dengan kuah kunyit aromatik, belimbing wuluh, dan rempah-rempah Maluku yang khas dan menyegarkan.</p>
+          <div class="khas-detail-meta">
+            <span class="tag tag-daun">Ikan Segar</span>
+            <span class="tag tag-kunyit">Kunyit</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="khas-detail-card fade-in khas-item" data-region="berat">
+        <div class="khas-detail-img">
+          <img src="assets/coto-makassar.webp" alt="Coto Makassar"
+               style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;"/>
+          <span class="khas-detail-region">Sulawesi Selatan</span>
+        </div>
+        <div class="khas-detail-body">
+          <div class="khas-detail-title">Coto Makassar</div>
+          <p class="khas-detail-desc">Sup daging dan jeroan sapi dengan kuah kental berbumbu dari 40 macam rempah. Disajikan bersama ketupat buras yang khas.</p>
+          <div class="khas-detail-meta">
+            <span class="tag tag-rempah">Kaya Rempah</span>
+            <span class="tag tag-batik">Berkuah</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="khas-detail-card fade-in delay-1 khas-item" data-region="berat">
+        <div class="khas-detail-img">
+          <img src="assets/gudeg.webp" alt="Gudeg Jogja"
+               style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;"/>
+          <span class="khas-detail-region">Yogyakarta</span>
+        </div>
+        <div class="khas-detail-body">
+          <div class="khas-detail-title">Gudeg Jogja</div>
+          <p class="khas-detail-desc">Gori (nangka muda) dimasak berjam-jam dengan santan dan bumbu gula jawa hingga berwarna coklat manis, disajikan dengan opor ayam.</p>
+          <div class="khas-detail-meta">
+            <span class="tag tag-kunyit">Manis</span>
+            <span class="tag tag-daun">Gurih</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="khas-detail-card fade-in khas-item" data-region="berat">
+        <div class="khas-detail-img">
+          <img src="assets/karedok.webp" alt="Karedok Segar"
+               style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;"/>
+          <span class="khas-detail-region">Jawa Barat</span>
+        </div>
+        <div class="khas-detail-body">
+          <div class="khas-detail-title">Karedok Segar</div>
+          <p class="khas-detail-desc">Sayuran mentah segar disiram bumbu kacang dengan terasi khas Sunda. Segar, bergizi, dan kaya cita rasa alami.</p>
+          <div class="khas-detail-meta">
+            <span class="tag tag-daun">Segar</span>
+            <span class="tag tag-daun">Vegetarian</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="khas-detail-card fade-in delay-1 khas-item" data-region="ringan">
+        <div class="khas-detail-img">
+          <img src="assets/martabak.webp" alt="Martabak Manis"
+               style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;"/>
+          <span class="khas-detail-region">Jawa Timur</span>
+        </div>
+        <div class="khas-detail-body">
+          <div class="khas-detail-title">Martabak Manis</div>
+          <p class="khas-detail-desc">Kue tebal dan lembut dengan isian coklat, keju, dan kacang yang melimpah. Camilan favorit yang populer di seluruh Indonesia.</p>
+          <div class="khas-detail-meta">
+            <span class="tag tag-kunyit">Manis</span>
+            <span class="tag tag-rempah">Lembut</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="khas-detail-card fade-in delay-2 khas-item" data-region="ringan">
+        <div class="khas-detail-img">
+          <img src="assets/klepon.webp" alt="Klepon"
+               style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;"/>
+          <span class="khas-detail-region">Nasional</span>
+        </div>
+        <div class="khas-detail-body">
+          <div class="khas-detail-title">Klepon</div>
+          <p class="khas-detail-desc">Bola ketan kenyal berwarna hijau pandan berisi gula merah cair, dibalut parutan kelapa segar. Jajanan tradisional yang menggugah selera.</p>
+          <div class="khas-detail-meta">
+            <span class="tag tag-daun">Pandan</span>
+            <span class="tag tag-kunyit">Manis</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="khas-detail-card fade-in khas-item" data-region="ringan">
+        <div class="khas-detail-img">
+          <img src="assets/pempek-lenjer.webp" alt="Pempek Lenjer"
+               style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;"/>
+          <span class="khas-detail-region">Sumatera Selatan</span>
+        </div>
+        <div class="khas-detail-body">
+          <div class="khas-detail-title">Pempek Lenjer</div>
+          <p class="khas-detail-desc">Pempek panjang khas Palembang tanpa isian telur, dibuat dari ikan tenggiri segar dan sagu, disajikan dengan kuah cuka gurih.</p>
+          <div class="khas-detail-meta">
+            <span class="tag tag-daun">Ikan Segar</span>
+            <span class="tag tag-rempah">Asam Manis</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="khas-detail-card fade-in khas-item" data-region="minuman">
+        <div class="khas-detail-img">
+          <img src="assets/es-dawet.webp" alt="Es Dawet Ayu"
+               style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;"/>
+          <span class="khas-detail-region">Jawa Tengah</span>
+        </div>
+        <div class="khas-detail-body">
+          <div class="khas-detail-title">Es Dawet Ayu</div>
+          <p class="khas-detail-desc">Minuman segar khas Banjarnegara berisi cendol hijau pandan, santan segar, gula merah cair, dan es batu. Manis dan menyegarkan.</p>
+          <div class="khas-detail-meta">
+            <span class="tag tag-daun">Segar</span>
+            <span class="tag tag-kunyit">Manis</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="khas-detail-card fade-in delay-1 khas-item" data-region="minuman">
+        <div class="khas-detail-img">
+          <img src="assets/kopi-aceh.webp" alt="Kopi Saring Aceh"
+               style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;"/>
+          <span class="khas-detail-region">Aceh</span>
+        </div>
+        <div class="khas-detail-body">
+          <div class="khas-detail-title">Kopi Saring Aceh</div>
+          <p class="khas-detail-desc">Kopi robusta khas Aceh yang disaring secara tradisional menggunakan kain, menghasilkan cita rasa kuat, pekat, dan aromatik.</p>
+          <div class="khas-detail-meta">
+            <span class="tag tag-batik">Kuat</span>
+            <span class="tag tag-rempah">Aromatik</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="khas-detail-card fade-in delay-2 khas-item" data-region="minuman">
+        <div class="khas-detail-img">
+          <img src="assets/jamu.webp" alt="Jamu Kunyit Asam"
+               style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;"/>
+          <span class="khas-detail-region">Nasional</span>
+        </div>
+        <div class="khas-detail-body">
+          <div class="khas-detail-title">Jamu Kunyit Asam</div>
+          <p class="khas-detail-desc">Minuman herbal tradisional berbahan kunyit segar, asam jawa, dan gula merah. Menyegarkan, menyehatkan, dan kaya antioksidan alami.</p>
+          <div class="khas-detail-meta">
+            <span class="tag tag-daun">Herbal</span>
+            <span class="tag tag-kunyit">Sehat</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="khas-detail-card fade-in khas-item" data-region="minuman">
+        <div class="khas-detail-img">
+          <img src="assets/bandrek.webp" alt="Bandrek Hangat"
+               style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;"/>
+          <span class="khas-detail-region">Jawa Barat</span>
+        </div>
+        <div class="khas-detail-body">
+          <div class="khas-detail-title">Bandrek Hangat</div>
+          <p class="khas-detail-desc">Minuman penghangat khas Sunda dari jahe, serai, kayu manis, dan susu. Sempurna dinikmati saat cuaca dingin atau malam hari.</p>
+          <div class="khas-detail-meta">
+            <span class="tag tag-rempah">Hangat</span>
+            <span class="tag tag-batik">Rempah</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- CTA(Call To Action): ajakan pesan -->
+<section style="padding: 0 0 5rem;">
+  <div class="container">
+    <div style="background:var(--rempah); border-radius:4px; padding:3rem 2rem; text-align:center;" class="fade-in">
+      <p class="section-label" style="color:var(--kunyit)">✦ Ingin Mencoba?</p>
+      <h2 class="section-title section-title-light" style="margin-top:0.5rem; margin-bottom:0.75rem">
+        Pesan Makanan Khas <em>Favorit</em> Anda
+      </h2>
+      <p style="color:rgba(250,243,232,0.7); font-size:0.95rem; margin-bottom:1.75rem;">
+        Semua makanan khas di atas tersedia di menu kami. Pesan sekarang!
+      </p>
+      <a href="menu.html" class="btn btn-primary">Lihat Menu & Pesan</a>
+    </div>
+  </div>
+</section>
+
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.85rem;">
+          <div class="navbar-logo-icon">DN</div>
+          <div class="navbar-logo-text" style="color:var(--krim)">Dapur <span>Nusantara</span></div>
+        </div>
+        <p class="footer-text">Melestarikan kekayaan kuliner Indonesia dengan cinta dan dedikasi sejak 2015.</p>
+        <div style="display:flex; gap:0.5rem; margin-top:1rem;">
+          <span class="tag tag-solid-rempah">Halal MUI</span>
+        </div>
+      </div>
+      <div>
+        <div class="footer-title">Halaman</div>
+        <div class="footer-links">
+          <a href="index.html">Beranda</a>
+          <a href="profil.html">Profil UMKM</a>
+          <a href="makanan-khas.html">Makanan Khas</a>
+          <a href="menu.html">Menu</a>
+          <a href="pemesanan.html">Pemesanan</a>
+          <a href="kontak.html">Kontak</a>
+        </div>
+      </div>
+      <div>
+        <div class="footer-title">Jam Operasional</div>
+        <p class="footer-text">Senin - Jumat: 07.00 - 20.00<br/>Sabtu: 07.00 - 17.00<br/>Minggu: Tutup</p>
+        <div style="margin-top:1rem;">
+          <div class="footer-title">Kontak</div>
+          <p class="footer-text">📞 0812-3456-7890<br/>📍 Tanjung Enim, Sumatera Selatan</p>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2026 Dapur Nusantara. Dibuat untuk melestarikan kuliner Indonesia.</p>
+      <p>Praktikum Pemrograman Web - Davin Gabriel J</p>
+    </div>
+  </div>
+</footer>
+
+<script src="js/main.js"></script>
+
+<script>
+  /**
+   * Filter card makanan khas berdasarkan kategori.
+   * @param {string} region - 'semua', 'berat', 'ringan', atau 'minuman'
+   */
+  function filterRegion(region) {
+    document.querySelectorAll('.region-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.region === region);
+    });
+    document.querySelectorAll('.khas-item').forEach(item => {
+      const match = region === 'semua' || item.dataset.region === region;
+      item.style.display = match ? 'block' : 'none';
+    });
+  }
+</script>
+</body>
+</html>

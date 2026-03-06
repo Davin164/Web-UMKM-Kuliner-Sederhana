@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dapur Nusantara - Kontak</title>
+  <link rel="stylesheet" href="css/style.css"/>
+  <style>
+    /* Layout dua kolom: info kontak kiri, form & jam kanan */
+    .kontak-grid {
+      display: grid; grid-template-columns: 1fr 1.2fr;
+      gap: 3rem; align-items: start;
+    }
+    @media (max-width: 860px) { .kontak-grid { grid-template-columns: 1fr; } }
+
+    /* Kartu info kontak (WA, IG, Email, Alamat)
+       display: flex → ikon & teks sejajar horizontal */
+    .contact-card {
+      display: flex; align-items: flex-start; gap: 1rem;
+      background: white; border-radius: 4px;
+      border: 1px solid rgba(196,98,45,0.1);
+      padding: 1.35rem;
+      transition: transform 0.3s, box-shadow 0.3s;
+      text-decoration: none; color: inherit;
+    }
+    .contact-card:hover { transform: translateY(-4px); box-shadow: 0 10px 28px rgba(44,26,14,0.1); }
+    .contact-icon { font-size: 1.75rem; flex-shrink: 0; } /* flex-shrink:0 → ikon tidak mengecil */
+    .contact-label { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--rempah); margin-bottom: 0.2rem; }
+    .contact-val   { font-family: 'Playfair Display', serif; font-weight: 700; font-size: 1rem; color: var(--batik); }
+    .contact-sub   { font-size: 0.82rem; color: rgba(44,26,14,0.55); margin-top: 0.2rem; }
+
+    /* Placeholder peta Google Maps */
+    .map-placeholder {
+      background: white; border-radius: 4px;
+      border: 1px solid rgba(196,98,45,0.12);
+      height: 260px;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 0.75rem; text-align: center;
+      padding: 1.5rem;
+    }
+    .map-placeholder p { font-size: 0.84rem; color: rgba(44,26,14,0.45); line-height: 1.6; }
+
+    /* Kotak form kirim pesan */
+    .msg-form {
+      background: white; border-radius: 4px;
+      border: 1px solid rgba(196,98,45,0.1);
+      padding: 1.75rem;
+    }
+    .msg-form-title {
+      font-family: 'Playfair Display', serif;
+      font-weight: 700; font-size: 1.2rem;
+      color: var(--batik); margin-bottom: 1.35rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid rgba(196,98,45,0.1);
+    }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    @media (max-width: 560px) { .form-row { grid-template-columns: 1fr; } }
+    .form-group { margin-bottom: 1rem; }
+
+    /* Grid jam operasional: 2 kolom */
+    .jam-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; }
+    .jam-item { background: rgba(196,98,45,0.06); border-radius: 3px; padding: 0.65rem 0.85rem; border: 1px solid rgba(196,98,45,0.12); }
+    .jam-day   { font-size: 0.78rem; font-weight: 700; color: var(--batik); }
+    .jam-time  { font-size: 0.8rem; color: rgba(44,26,14,0.6); margin-top: 0.1rem; }
+    .jam-item.closed { opacity: 0.55; } /* tampilan redup untuk hari tutup */
+    .jam-item.closed .jam-time { color: #c0392b; } /* teks merah untuk "Tutup" */
+  </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="navbar-inner">
+    <a href="index.html" class="navbar-logo">
+      <div class="navbar-logo-icon">DN</div>
+      <div class="navbar-logo-text">Dapur <span>Nusantara</span></div>
+    </a>
+    <ul class="navbar-links">
+      <li><a href="index.html">Beranda</a></li>
+      <li><a href="profil.html">Profil</a></li>
+      <li><a href="makanan-khas.html">Makanan Khas</a></li>
+      <li><a href="menu.html">Menu</a></li>
+      <li><a href="pemesanan.html">Pemesanan</a></li>
+      <li><a href="kontak.html" class="active">Kontak</a></li>
+      <li class="btn-nav-wrap"><a href="pemesanan.html" class="btn-nav">Pesan Sekarang</a></li>
+    </ul>
+    <button class="hamburger" aria-label="Menu">
+      <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
+      </svg>
+    </button>
+  </div>
+  <div class="mobile-menu">
+    <a href="index.html">Beranda</a>
+    <a href="profil.html">Profil</a>
+    <a href="makanan-khas.html">Makanan Khas</a>
+    <a href="menu.html">Menu</a>
+    <a href="pemesanan.html">Pemesanan</a>
+    <a href="kontak.html">Kontak</a>
+    <a href="pemesanan.html" class="btn btn-dark" style="text-align:center">Pesan Sekarang</a>
+  </div>
+</nav>
+
+
+<!-- PAGE HEADER -->
+<header class="page-header">
+  <div class="breadcrumb"><a href="index.html">Beranda</a> › <span>Kontak</span></div>
+  <p class="page-header-label section-label">✦ Hubungi Kami</p>
+  <h1 class="page-header-title">Contact <em>Person</em></h1>
+  <p class="page-header-sub">Kami siap melayani pertanyaan dan pesanan Anda</p>
+  <div class="page-header-wave">
+    <svg viewBox="0 0 1440 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0 60L48 52C96 44 192 28 288 24C384 20 480 28 576 36C672 44 768 52 864 48C960 44 1056 28 1152 24C1248 20 1344 28 1392 32L1440 36V60H0Z" fill="#FAF3E8"/>
+    </svg>
+  </div>
+</header>
+
+
+<!-- SECTION: Informasi Kontak -->
+<section class="section">
+  <div class="container">
+    <div class="kontak-grid">
+
+      <!-- Kolom kiri: kartu kontak + peta -->
+      <div>
+        <p class="section-label fade-in">✦ Saluran Komunikasi</p>
+        <h2 class="section-title fade-in delay-1" style="margin-top:0.4rem">Cara <em>Menghubungi</em> Kami</h2>
+        <div class="divider fade-in delay-2"></div>
+
+        <!-- Daftar kartu kontak -->
+        <div style="display:flex; flex-direction:column; gap:0.85rem; margin-top:1.5rem;">
+
+          <!-- Kartu WA: pakai <a> agar bisa diklik langsung ke WA -->
+          <a href="https://wa.me/6281234567890" target="_blank" class="contact-card fade-in delay-1">
+            <div class="contact-icon">💬</div>
+            <div>
+              <div class="contact-label">WhatsApp</div>
+              <div class="contact-val">0812-3456-7890</div>
+              <div class="contact-sub">Aktif Senin–Sabtu, 07.00–20.00 WIB</div>
+            </div>
+          </a>
+
+          <!-- Kartu Instagram -->
+          <a href="https://instagram.com/dapurnusantara.id" target="_blank" class="contact-card fade-in delay-2">
+            <div class="contact-icon">📸</div>
+            <div>
+              <div class="contact-label">Instagram</div>
+              <div class="contact-val">@dapurnusantara.id</div>
+              <div class="contact-sub">Follow untuk promo dan menu terbaru</div>
+            </div>
+          </a>
+
+          <!-- Kartu Email: tidak bisa diklik (cursor:default) karena tidak ada link email -->
+          <div class="contact-card fade-in delay-3" style="cursor:default;">
+            <div class="contact-icon">📧</div>
+            <div>
+              <div class="contact-label">Email</div>
+              <div class="contact-val">dapur.nusantara@email.com</div>
+              <div class="contact-sub">Untuk kerjasama dan pertanyaan formal</div>
+            </div>
+          </div>
+
+          <!-- Kartu Alamat -->
+          <div class="contact-card fade-in delay-3" style="cursor:default;">
+            <div class="contact-icon">📍</div>
+            <div>
+              <div class="contact-label">Alamat</div>
+              <div class="contact-val">Jl. Rempah No. 17</div>
+              <div class="contact-sub">Kel. Ilir Barat, Palembang, Sumatera Selatan</div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Placeholder peta — bisa diganti dengan Google Maps embed iframe -->
+        <div class="map-placeholder fade-in" style="margin-top:1.25rem;">
+          <span style="font-size:2.5rem;">🗺️</span>
+          <p>
+            <strong style="color:var(--batik)">Dapur Nusantara</strong><br/>
+            Jl. Rempah No. 17, Palembang<br/>
+            <span style="font-size:0.78rem; color:rgba(44,26,14,0.4)">
+              Google Maps dapat diintegrasikan di sini menggunakan API Key
+            </span>
+          </p>
+          <a href="https://maps.google.com" target="_blank" class="btn btn-dark"
+             style="font-size:0.78rem; padding:0.5rem 1.2rem;">
+            Buka di Google Maps
+          </a>
+        </div>
+      </div>
+
+      <!-- Kolom kanan: jam operasional + form pesan -->
+      <div>
+
+        <!-- Jam operasional -->
+        <div style="background:white; border-radius:4px; border:1px solid rgba(196,98,45,0.1); padding:1.5rem; margin-bottom:1.5rem;" class="fade-in delay-1">
+          <p style="font-size:0.72rem; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:var(--rempah); margin-bottom:1rem;">🕐 Jam Operasional</p>
+          <div class="jam-grid">
+            <div class="jam-item">
+              <div class="jam-day">Senin - Jumat</div>
+              <div class="jam-time">07.00 - 20.00 WIB</div>
+            </div>
+            <div class="jam-item">
+              <div class="jam-day">Sabtu</div>
+              <div class="jam-time">07.00 - 17.00 WIB</div>
+            </div>
+            <!-- class "closed" membuat tampilan item ini menjadi redup + teks merah -->
+            <div class="jam-item closed">
+              <div class="jam-day">Minggu</div>
+              <div class="jam-time">Tutup</div>
+            </div>
+            <div class="jam-item">
+              <div class="jam-day">Hari Libur</div>
+              <div class="jam-time">Cek Instagram Kami</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Form kirim pesan via WA -->
+        <div class="msg-form fade-in delay-2">
+          <div class="msg-form-title">✉️ Kirim Pesan</div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Nama</label>
+              <input type="text" id="msg-nama" class="form-input" placeholder="Nama Anda"/>
+            </div>
+            <div class="form-group">
+              <label class="form-label">No. WhatsApp</label>
+              <input type="tel" id="msg-wa" class="form-input" placeholder="08xxxxxxxxxx"/>
+            </div>
+          </div>
+
+          <!-- Dropdown select untuk pilihan subjek pesan -->
+          <div class="form-group">
+            <label class="form-label">Subjek</label>
+            <select id="msg-subjek" class="form-input">
+              <option value="">Pilih Subjek</option>
+              <option>Pertanyaan tentang Menu</option>
+              <option>Pemesanan dalam Jumlah Besar</option>
+              <option>Kerjasama & Sponsorship</option>
+              <option>Keluhan & Saran</option>
+              <option>Lainnya</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Pesan</label>
+            <textarea id="msg-pesan" class="form-input" rows="4" placeholder="Tulis pesan Anda di sini..."></textarea>
+          </div>
+
+          <!-- Tombol kirim → memanggil sendMessage() di bawah -->
+          <button onclick="sendMessage()" class="btn btn-dark btn-full">
+            Kirim via WhatsApp 📱
+          </button>
+          <p style="font-size:0.76rem; color:rgba(44,26,14,0.4); text-align:center; margin-top:0.6rem;">
+            Pesan akan dikirimkan ke WhatsApp kami
+          </p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- SECTION: FAQ -->
+<section class="section" style="background:white; padding-top:4rem; padding-bottom:4rem;">
+  <div class="container">
+    <div style="text-align:center; margin-bottom:2.5rem;">
+      <p class="section-label fade-in">✦ FAQ</p>
+      <h2 class="section-title fade-in delay-1" style="margin-top:0.4rem">Pertanyaan yang Sering <em>Ditanyakan</em></h2>
+      <div class="divider divider-center fade-in delay-2"></div>
+    </div>
+
+    <!-- Daftar FAQ — bisa dijadikan accordion dengan JS jika diperlukan -->
+    <div style="max-width:700px; margin:0 auto; display:flex; flex-direction:column; gap:0.85rem;">
+
+      <div class="fade-in" style="background:var(--krim); border-radius:4px; border:1px solid rgba(196,98,45,0.12); padding:1.25rem;">
+        <p style="font-weight:700; color:var(--batik); margin-bottom:0.4rem;">Berapa minimal pemesanan?</p>
+        <p style="font-size:0.88rem; color:rgba(44,26,14,0.65); line-height:1.7;">Tidak ada minimal pemesanan, namun free ongkir berlaku untuk pembelian minimal Rp 75.000.</p>
+      </div>
+
+      <div class="fade-in delay-1" style="background:var(--krim); border-radius:4px; border:1px solid rgba(196,98,45,0.12); padding:1.25rem;">
+        <p style="font-weight:700; color:var(--batik); margin-bottom:0.4rem;">Berapa lama estimasi pengiriman?</p>
+        <p style="font-size:0.88rem; color:rgba(44,26,14,0.65); line-height:1.7;">Estimasi 30–60 menit setelah pesanan dikonfirmasi, tergantung jarak lokasi di Kota Palembang.</p>
+      </div>
+
+      <div class="fade-in delay-2" style="background:var(--krim); border-radius:4px; border:1px solid rgba(196,98,45,0.12); padding:1.25rem;">
+        <p style="font-weight:700; color:var(--batik); margin-bottom:0.4rem;">Apakah bisa pesan untuk acara/catering?</p>
+        <p style="font-size:0.88rem; color:rgba(44,26,14,0.65); line-height:1.7;">Ya! Kami melayani catering untuk acara keluarga, kantor, dan hajatan. Hubungi kami minimal 2 hari sebelum acara.</p>
+      </div>
+
+      <div class="fade-in delay-3" style="background:var(--krim); border-radius:4px; border:1px solid rgba(196,98,45,0.12); padding:1.25rem;">
+        <p style="font-weight:700; color:var(--batik); margin-bottom:0.4rem;">Apakah makanan kami halal?</p>
+        <p style="font-size:0.88rem; color:rgba(44,26,14,0.65); line-height:1.7;">Ya, semua produk kami telah mendapat sertifikasi Halal dari MUI.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.85rem;">
+          <div class="navbar-logo-icon">DN</div>
+          <div class="navbar-logo-text" style="color:var(--krim)">Dapur <span>Nusantara</span></div>
+        </div>
+        <p class="footer-text">Melestarikan kekayaan kuliner Indonesia dengan cinta dan dedikasi sejak 2015.</p>
+        <div style="display:flex; gap:0.5rem; margin-top:1rem;">
+          <span class="tag tag-solid-rempah">Halal MUI</span>
+        </div>
+      </div>
+      <div>
+        <div class="footer-title">Halaman</div>
+        <div class="footer-links">
+          <a href="index.html">Beranda</a>
+          <a href="profil.html">Profil UMKM</a>
+          <a href="makanan-khas.html">Makanan Khas</a>
+          <a href="menu.html">Menu</a>
+          <a href="pemesanan.html">Pemesanan</a>
+          <a href="kontak.html">Kontak</a>
+        </div>
+      </div>
+      <div>
+        <div class="footer-title">Jam Operasional</div>
+        <p class="footer-text">Senin - Jumat: 07.00 - 20.00<br/>Sabtu: 07.00 - 17.00<br/>Minggu: Tutup</p>
+        <div style="margin-top:1rem;">
+          <div class="footer-title">Kontak</div>
+          <p class="footer-text">📞 0812-3456-7890<br/>📍 Tanjung Enim, Sumatera Selatan</p>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2026 Dapur Nusantara. Dibuat untuk melestarikan kuliner Indonesia.</p>
+      <p>Praktikum Pemrograman Web - Davin Gabriel J</p>
+    </div>
+  </div>
+</footer>
+
+<div class="toast"></div>
+<script src="js/main.js"></script>
+
+<script>
+  /**
+   * Kirim pesan kontak via WhatsApp.
+   * Validasi field wajib terlebih dahulu, lalu susun teks pesan dan buka WA.
+   */
+  function sendMessage() {
+    const nama   = document.getElementById('msg-nama').value.trim();
+    const wa     = document.getElementById('msg-wa').value.trim();
+    const subjek = document.getElementById('msg-subjek').value;
+    const pesan  = document.getElementById('msg-pesan').value.trim();
+
+    // Validasi: Nama, WA, dan Pesan wajib diisi
+    if (!nama || !wa || !pesan) {
+      alert('Mohon isi Nama, WhatsApp, dan Pesan!');
+      return;
+    }
+
+    // Susun teks pesan dengan format yang mudah dibaca
+    const teks =
+      `*PESAN MASUK — DAPUR NUSANTARA*\n\n` +
+      `Nama    : ${nama}\n` +
+      `WA      : ${wa}\n` +
+      `Subjek  : ${subjek || '-'}\n\n` +
+      `Pesan   :\n${pesan}`;
+
+    // encodeURIComponent: mengubah karakter khusus agar aman dipakai di URL
+    window.open(`https://wa.me/6281234567890?text=${encodeURIComponent(teks)}`, '_blank');
+  }
+</script>
+</body>
+</html>

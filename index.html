@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dapur Nusantara - Beranda</title>
+  <link rel="stylesheet" href="css/style.css"/>
+  <style>
+    /* HERO SECTION
+       min-height: 100vh → hero mengisi minimal setinggi layar penuh
+       padding-top: 62px → beri ruang agar konten tidak tertutup navbar fixed */
+    .hero {
+      min-height: 100vh;
+      background: var(--batik);
+      background-image:
+        radial-gradient(ellipse at 75% 25%, rgba(228,168,56,0.22) 0%, transparent 55%),
+        radial-gradient(ellipse at 15% 75%, rgba(196,98,45,0.25) 0%, transparent 55%);
+      display: flex; align-items: center;
+      padding-top: 62px; position: relative; overflow: hidden;
+    }
+    .hero-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 3rem; align-items: center; padding: 4rem 0;
+    }
+    @media (max-width: 860px) {
+      .hero-grid { grid-template-columns: 1fr; }
+      .hero-right { display: none; } /* sembunyikan kolom kanan di mobile */
+    }
+    .hero-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.8rem, 6vw, 5.5rem);
+      font-weight: 700; line-height: 1.05;
+      color: var(--krim); letter-spacing: -0.01em;
+    }
+    .hero-title em { color: var(--kunyit); font-style: italic; }
+    .hero-sub {
+      font-size: 1rem; color: rgba(250,243,232,0.65);
+      line-height: 1.8; margin: 1.25rem 0 2rem;
+      max-width: 440px;
+    }
+    .hero-stats { display: flex; gap: 2rem; margin-top: 2.5rem; }
+    .hero-stat-num { font-family: 'Playfair Display', serif; font-size: 1.8rem; font-weight: 700; color: var(--kunyit); }
+    .hero-stat-label { font-size: 0.75rem; color: rgba(250,243,232,0.55); margin-top: 0.1rem; }
+    .hero-stat-sep { width: 1px; background: rgba(250,243,232,0.15); } /* garis pemisah vertikal */
+
+    /* Card preview menu di sisi kanan hero */
+    .hero-card {
+      background: rgba(250,243,232,0.07);
+      border: 1px solid rgba(228,168,56,0.2);
+      border-radius: 6px; overflow: hidden;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 24px 60px rgba(0,0,0,0.3);
+    }
+    .hero-card-img {
+      height: 200px;
+      background: linear-gradient(135deg, rgba(196,98,45,0.5), rgba(123,45,0,0.7));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 5rem; position: relative;
+    }
+    /* Lapisan gradasi gelap agar teks label terbaca di atas gambar */
+    .hero-card-img::after {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(44,26,14,0.65) 0%, transparent 55%);
+    }
+    .hero-card-label { position: absolute; bottom: 12px; left: 14px; z-index: 2; }
+    .hero-card-label p { color: var(--krim); font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 700; }
+    .hero-card-label span { color: rgba(250,243,232,0.65); font-size: 0.78rem; }
+    .hero-card-body { padding: 1rem 1.2rem; }
+    .hero-card-stars { color: var(--kunyit); font-size: 0.9rem; }
+    .hero-card-rating { font-size: 0.78rem; color: rgba(250,243,232,0.5); margin-top: 0.15rem; }
+
+    .mini-cards { display: flex; flex-direction: column; gap: 0.75rem; margin-top: 1rem; }
+    .mini-card {
+      display: flex; align-items: center; gap: 0.75rem;
+      background: rgba(250,243,232,0.06); border: 1px solid rgba(250,243,232,0.1);
+      border-radius: 4px; padding: 0.65rem 0.9rem;
+    }
+    /* Thumbnail gambar kecil di mini card */
+    .mini-card-img {
+      width: 42px; height: 42px; border-radius: 3px;
+      object-fit: cover; flex-shrink: 0;
+    }
+    .mini-card-name  { font-size: 0.82rem; font-weight: 600; color: var(--krim); }
+    .mini-card-price { font-size: 0.74rem; color: rgba(250,243,232,0.5); margin-top: 0.1rem; }
+
+    /* SVG gelombang di bagian bawah hero untuk transisi ke section berikutnya */
+    .hero-wave { position: absolute; bottom: -1px; left: 0; right: 0; line-height: 0; }
+
+    /* HIGHLIGHT SECTION (Keunggulan Kami) */
+    .highlight-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem;
+    }
+    @media (max-width: 700px) { .highlight-grid { grid-template-columns: 1fr; } }
+    .highlight-card {
+      text-align: center; padding: 2.25rem 1.5rem;
+      background: white; border-radius: 4px;
+      border: 1px solid rgba(196,98,45,0.1);
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .highlight-card:hover { transform: translateY(-5px); box-shadow: 0 12px 32px rgba(44,26,14,0.1); }
+    .highlight-icon { font-size: 2.5rem; margin-bottom: 0.9rem; }
+    .highlight-title { font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 700; color: var(--batik); margin-bottom: 0.5rem; }
+    .highlight-desc  { font-size: 0.86rem; color: rgba(44,26,14,0.6); line-height: 1.7; }
+
+    /* FEATURED MENU */
+    .featured-bg { background: white; }
+    .featured-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.25rem;
+      margin-top: 2.5rem;
+    }
+    @media (max-width: 960px) { .featured-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 480px) { .featured-grid { grid-template-columns: 1fr; } }
+
+    /* CTA BANNER */
+    .cta-banner {
+      background: var(--batik);
+      background-image: radial-gradient(ellipse at 80% 50%, rgba(228,168,56,0.18) 0%, transparent 60%);
+      padding: 4rem 1.5rem; text-align: center; border-radius: 6px;
+      margin: 0 1.5rem;
+    }
+    @media (max-width: 600px) { .cta-banner { margin: 0; border-radius: 0; } }
+  </style>
+</head>
+<body>
+
+<!-- NAVBAR: navigasi utama
+     Posisi fixed, aktif di semua halaman-->
+<nav class="navbar">
+  <div class="navbar-inner">
+
+    <!-- Logo kiri -->
+    <a href="index.html" class="navbar-logo">
+      <div class="navbar-logo-icon">DN</div>
+      <div class="navbar-logo-text">Dapur <span>Nusantara</span></div>
+    </a>
+
+    <!-- Link navigasi desktop -->
+    <ul class="navbar-links">
+      <li><a href="index.html" class="active">Beranda</a></li>
+      <li><a href="profil.html">Profil</a></li>
+      <li><a href="makanan-khas.html">Makanan Khas</a></li>
+      <li><a href="menu.html">Menu</a></li>
+      <li><a href="pemesanan.html">Pemesanan</a></li>
+      <li><a href="kontak.html">Kontak</a></li>
+      <li class="btn-nav-wrap"><a href="pemesanan.html" class="btn-nav">Pesan Sekarang</a></li>
+    </ul>
+
+    <!-- Tombol hamburger (☰) hanya muncul di layar kecil via CSS -->
+    <button class="hamburger" aria-label="Menu">
+      <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
+      </svg>
+    </button>
+  </div>
+
+  <!-- Menu dropdown mobile, ditampilkan JS saat hamburger diklik -->
+  <div class="mobile-menu">
+    <a href="index.html">Beranda</a>
+    <a href="profil.html">Profil</a>
+    <a href="makanan-khas.html">Makanan Khas</a>
+    <a href="menu.html">Menu</a>
+    <a href="pemesanan.html">Pemesanan</a>
+    <a href="kontak.html">Kontak</a>
+    <a href="pemesanan.html" class="btn btn-dark" style="text-align:center">Pesan Sekarang</a>
+  </div>
+</nav>
+
+
+<!-- HERO SECTION: bagian pembuka utama -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-grid">
+
+      <!-- Kolom kiri: teks & tombol CTA -->
+      <div>
+        <p class="section-label" style="color: var(--kunyit)">UMKM Makanan Nusantara</p>
+        <h1 class="hero-title">
+          Rasa <em>Autentik</em><br/>dari Dapur<br/>Rumah
+        </h1>
+        <p class="hero-sub">
+          Menyajikan kekayaan kuliner Nusantara dengan cita rasa tradisional yang dijaga turun-temurun. Dari Sabang sampai Merauke, akan hadir di meja Anda.
+        </p>
+        <div style="display:flex; gap:1rem; flex-wrap:wrap;">
+          <a href="menu.html" class="btn btn-primary">Lihat Menu</a>
+          <a href="profil.html" class="btn btn-outline-light">Tentang Kami</a>
+        </div>
+        <!-- Statistik singkat -->
+        <div class="hero-stats">
+          <div>
+            <div class="hero-stat-num">16+</div>
+            <div class="hero-stat-label">Menu Nusantara</div>
+          </div>
+          <div class="hero-stat-sep"></div>
+          <div>
+            <div class="hero-stat-num">6+</div>
+            <div class="hero-stat-label">Daerah Asal</div>
+          </div>
+          <div class="hero-stat-sep"></div>
+          <div>
+            <div class="hero-stat-num">1K+</div>
+            <div class="hero-stat-label">Pelanggan Puas</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Kolom kanan: preview card menu (disembunyikan di mobile) -->
+      <div class="hero-right">
+        <!-- Card utama: Soto Betawi -->
+        <div class="hero-card">
+          <div class="hero-card-img">
+            <!-- z-index: 1 agar gambar di atas overlay ::after -->
+            <img src="assets/soto-betawi.webp" alt="Soto Betawi"
+                 style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;"/>
+            <div class="hero-card-label">
+              <p>Soto Betawi</p>
+              <span>Jakarta • Rp 35.000</span>
+            </div>
+          </div>
+          <div class="hero-card-body">
+            <div class="hero-card-stars">★★★★★</div>
+            <div class="hero-card-rating">4.9 · 238 ulasan</div>
+          </div>
+        </div>
+
+        <!-- Mini cards: preview 2 menu lain -->
+        <div class="mini-cards">
+          <div class="mini-card">
+            <img src="assets/rendang.webp" alt="Rendang Padang" class="mini-card-img"/>
+            <div>
+              <div class="mini-card-name">Rendang Padang</div>
+              <div class="mini-card-price">Rp 45.000 · Sumatera Barat</div>
+            </div>
+          </div>
+          <div class="mini-card">
+            <img src="assets/nasi-liwet.webp" alt="Nasi Liwet Solo" class="mini-card-img"/>
+            <div>
+              <div class="mini-card-name">Nasi Liwet Solo</div>
+              <div class="mini-card-price">Rp 28.000 · Jawa Tengah</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- SVG gelombang dekoratif di bagian bawah hero -->
+  <div class="hero-wave">
+    <svg viewBox="0 0 1440 70" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0 70L48 61C96 52 192 34 288 29C384 24 480 32 576 42C672 52 768 62 864 58C960 54 1056 34 1152 29C1248 24 1344 34 1392 39L1440 44V70H0Z" fill="#FAF3E8"/>
+    </svg>
+  </div>
+</section>
+
+
+<!-- STATS BAR -->
+<div class="stats-bar">
+  <div class="stats-grid">
+    <div>
+      <div class="stat-num">100%</div>
+      <div class="stat-label">Bahan Segar Lokal</div>
+    </div>
+    <div>
+      <div class="stat-num">Tanpa MSG</div>
+      <div class="stat-label">Rempah Alami</div>
+    </div>
+    <div>
+      <div class="stat-num">Halal</div>
+      <div class="stat-label">Bersertifikat MUI</div>
+    </div>
+    <div>
+      <div class="stat-num">Free Ongkir</div>
+      <div class="stat-label">Min. Order Rp 75.000</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- SECTION: Keunggulan Kami -->
+<section class="section">
+  <div class="container">
+    <div style="text-align:center; margin-bottom:2.5rem;">
+      <p class="section-label fade-in">Mengapa Memilih Kami</p>
+      <h2 class="section-title fade-in delay-1" style="margin-top:0.4rem">Keunggulan <em>Kami</em></h2>
+      <div class="divider divider-center fade-in delay-2"></div>
+    </div>
+    <div class="highlight-grid">
+      <div class="highlight-card fade-in delay-1">
+        <div class="highlight-icon">🌿</div>
+        <div class="highlight-title">Bahan Alami & Segar</div>
+        <p class="highlight-desc">Semua bahan dipilih langsung dari pasar lokal setiap pagi. Tidak ada pengawet, tidak ada penyedap buatan.</p>
+      </div>
+      <div class="highlight-card fade-in delay-2">
+        <div class="highlight-icon">👩‍🍳</div>
+        <div class="highlight-title">Resep Turun-Temurun</div>
+        <p class="highlight-desc">Setiap hidangan dimasak mengikuti resep leluhur yang telah teruji selama puluhan tahun dengan cita rasa autentik.</p>
+      </div>
+      <div class="highlight-card fade-in delay-3">
+        <div class="highlight-icon">🚴</div>
+        <div class="highlight-title">Antar ke Rumah</div>
+        <p class="highlight-desc">Pesan melalui WhatsApp, pesanan diantar langsung ke depan pintu Anda. Cepat, aman, dan masih hangat.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- SECTION: Featured Menu (Favorit Pelanggan) -->
+<section class="section featured-bg">
+  <div class="container">
+    <div style="display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:1rem;">
+      <div>
+        <p class="section-label fade-in">Menu Pilihan</p>
+        <h2 class="section-title fade-in delay-1" style="margin-top:0.4rem">Favorit <em>Pelanggan</em></h2>
+        <div class="divider fade-in delay-2"></div>
+      </div>
+      <a href="menu.html" class="btn btn-outline fade-in">Lihat Semua Menu</a>
+    </div>
+
+    <!-- Grid 4 kolom, responsif jadi 2 kolom di tablet dan 1 di HP -->
+    <div class="featured-grid">
+
+      <!-- Card Menu: Rendang Padang -->
+      <div class="card fade-in delay-1">
+        <div class="card-img">
+          <img src="assets/rendang.webp" alt="Rendang Padang"/>
+          <span class="card-badge tag-kunyit">Terlaris</span>
+          <span class="card-region">Sumatera Barat</span>
+        </div>
+        <div class="card-body">
+          <div class="card-title">Rendang Padang</div>
+          <div class="card-desc">Daging sapi empuk, rempah pilihan 40+</div>
+          <div class="card-footer">
+            <span class="card-price">Rp 45.000</span>
+            <a href="pemesanan.html" class="btn btn-dark" style="padding:0.4rem 0.9rem; font-size:0.78rem">Pesan</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card Menu: Pempek Kapal Selam -->
+      <div class="card fade-in delay-2">
+        <div class="card-img">
+          <img src="assets/pempek.webp" alt="Pempek Kapal Selam"/>
+          <span class="card-badge tag-solid-daun">Spesial</span>
+          <span class="card-region">Sumatera Selatan</span>
+        </div>
+        <div class="card-body">
+          <div class="card-title">Pempek Kapal Selam</div>
+          <div class="card-desc">Ikan tenggiri segar, telur, cuka khas</div>
+          <div class="card-footer">
+            <span class="card-price">Rp 20.000</span>
+            <a href="pemesanan.html" class="btn btn-dark" style="padding:0.4rem 0.9rem; font-size:0.78rem">Pesan</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card Menu: Soto Betawi -->
+      <div class="card fade-in delay-3">
+        <div class="card-img">
+          <img src="assets/soto-betawi.webp" alt="Soto Betawi"/>
+          <span class="card-region">Jakarta</span>
+        </div>
+        <div class="card-body">
+          <div class="card-title">Soto Betawi</div>
+          <div class="card-desc">Kuah santan susu, daging sapi, tomat</div>
+          <div class="card-footer">
+            <span class="card-price">Rp 35.000</span>
+            <a href="pemesanan.html" class="btn btn-dark" style="padding:0.4rem 0.9rem; font-size:0.78rem">Pesan</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card Menu: Bebek Betutu -->
+      <div class="card fade-in delay-3">
+        <div class="card-img">
+          <img src="assets/bebek-betutu.webp" alt="Bebek Betutu"/>
+          <span class="card-badge tag-solid-rempah">Premium</span>
+          <span class="card-region">Bali</span>
+        </div>
+        <div class="card-body">
+          <div class="card-title">Bebek Betutu</div>
+          <div class="card-desc">Base genep, daun pisang, panggang 8 jam</div>
+          <div class="card-footer">
+            <span class="card-price">Rp 65.000</span>
+            <a href="pemesanan.html" class="btn btn-dark" style="padding:0.4rem 0.9rem; font-size:0.78rem">Pesan</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- CTA BANNER: ajakan pesan sekarang -->
+<section class="section" style="padding-bottom: 5rem;">
+  <div class="cta-banner fade-in">
+    <p class="section-label" style="color:var(--kunyit)">✦ Siap Memesan?</p>
+    <h2 class="section-title section-title-light" style="margin-top:0.5rem; margin-bottom:0.75rem">
+      Nikmati Cita Rasa<br/><em>Nusantara</em> Hari Ini
+    </h2>
+    <p style="color:rgba(250,243,232,0.6); font-size:0.95rem; margin-bottom:2rem;">
+      Pesan sekarang dan dapatkan free ongkir untuk minimum pembelian Rp 75.000
+    </p>
+    <div style="display:flex; gap:1rem; justify-content:center; flex-wrap:wrap;">
+      <a href="pemesanan.html" class="btn btn-primary">Pesan Sekarang</a>
+      <a href="kontak.html" class="btn btn-outline-light">Hubungi Kami</a>
+    </div>
+  </div>
+</section>
+
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+
+      <!-- Kolom 1: Tentang singkat -->
+      <div>
+        <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.85rem;">
+          <div class="navbar-logo-icon">DN</div>
+          <div class="navbar-logo-text" style="color:var(--krim)">Dapur <span>Nusantara</span></div>
+        </div>
+        <p class="footer-text">Melestarikan kekayaan kuliner Indonesia dengan cinta dan dedikasi sejak 2015.</p>
+        <div style="display:flex; gap:0.5rem; margin-top:1rem;">
+          <span class="tag tag-solid-rempah">Halal MUI</span>
+        </div>
+      </div>
+
+      <!-- Kolom 2: Link halaman -->
+      <div>
+        <div class="footer-title">Halaman</div>
+        <div class="footer-links">
+          <a href="index.html">Beranda</a>
+          <a href="profil.html">Profil UMKM</a>
+          <a href="makanan-khas.html">Makanan Khas</a>
+          <a href="menu.html">Menu</a>
+          <a href="pemesanan.html">Pemesanan</a>
+          <a href="kontak.html">Kontak</a>
+        </div>
+      </div>
+
+      <!-- Kolom 3: Info operasional -->
+      <div>
+        <div class="footer-title">Jam Operasional</div>
+        <p class="footer-text">
+          Senin - Jumat: 07.00 - 20.00<br/>
+          Sabtu: 07.00 - 17.00<br/>
+          Minggu: Tutup
+        </p>
+        <div style="margin-top:1rem;">
+          <div class="footer-title">Kontak</div>
+          <p class="footer-text">📞 0812-3456-7890<br/>📍 Tanjung Enim, Sumatera Selatan</p>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Copyright -->
+    <div class="footer-bottom">
+      <p>© 2026 Dapur Nusantara. Dibuat untuk melestarikan kuliner Indonesia.</p>
+      <p>Praktikum Pemrograman Web - Davin Gabriel J</p>
+    </div>
+  </div>
+</footer>
+
+<script src="js/main.js"></script>
+</body>
+</html>

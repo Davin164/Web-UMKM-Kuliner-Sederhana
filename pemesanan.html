@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dapur Nusantara - Pemesanan</title>
+  <link rel="stylesheet" href="css/style.css"/>
+  <style>
+    /* Background section utama pemesanan — latar gelap dengan aksen gradient */
+    .order-section {
+      background: var(--batik);
+      background-image: radial-gradient(ellipse at 80% 20%, rgba(228,168,56,0.18) 0%, transparent 55%);
+      padding: 4rem 0 5rem;
+    }
+
+    /* Layout dua kolom: cart kiri, form kanan */
+    .order-grid {
+      display: grid; grid-template-columns: 1fr 1.5fr;
+      gap: 2.5rem; align-items: start;
+    }
+    @media (max-width: 860px) { .order-grid { grid-template-columns: 1fr; } }
+
+    /* ── Kotak Keranjang ── */
+    .cart-box {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(228,168,56,0.2);
+      border-radius: 4px; padding: 1.5rem;
+    }
+    .cart-box-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem; font-weight: 700;
+      color: var(--kunyit); margin-bottom: 1.1rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid rgba(250,243,232,0.1);
+    }
+    .cart-empty {
+      font-size: 0.86rem; color: rgba(250,243,232,0.4);
+      font-style: italic; text-align: center; padding: 1rem 0;
+    }
+    /* Satu baris item di keranjang */
+    .cart-item {
+      padding: 0.65rem 0;
+      border-bottom: 1px solid rgba(250,243,232,0.08);
+    }
+    .cart-item:last-child { border-bottom: none; }
+    .cart-item-info {
+      display: flex; justify-content: space-between;
+      align-items: center; margin-bottom: 0.35rem;
+    }
+    .cart-item-name  { font-size: 0.86rem; color: var(--krim); font-weight: 500; }
+    .cart-item-price { font-size: 0.84rem; color: var(--kunyit); font-weight: 600; }
+
+    /* Kontrol qty: tombol − jumlah + */
+    .cart-item-qty   { display: flex; align-items: center; gap: 0.6rem; }
+    .qty-btn {
+      width: 26px; height: 26px;
+      background: rgba(250,243,232,0.1);
+      border: 1px solid rgba(250,243,232,0.2);
+      border-radius: 3px; color: var(--krim);
+      font-size: 0.9rem; font-weight: 700;
+      cursor: pointer; transition: background 0.2s;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .qty-btn:hover { background: var(--rempah); border-color: var(--rempah); }
+    .cart-item-qty span { font-size: 0.86rem; color: var(--krim); font-weight: 600; min-width: 1.2rem; text-align: center; }
+
+    /* Baris total harga di bawah daftar item */
+    .cart-total-row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding-top: 0.85rem; margin-top: 0.5rem;
+      border-top: 1px solid rgba(250,243,232,0.15);
+    }
+    .cart-total-label { font-size: 0.86rem; color: rgba(250,243,232,0.7); font-weight: 600; }
+    .cart-total-val   { font-family: 'Playfair Display', serif; font-size: 1.2rem; font-weight: 700; color: var(--kunyit); }
+
+    .cart-actions { margin-top: 0.75rem; }
+    /* Tombol kosongkan keranjang — tampilan minimal, tidak mencolok */
+    .btn-clear {
+      background: none; border: none;
+      color: rgba(250,243,232,0.35);
+      font-size: 0.78rem; cursor: pointer;
+      transition: color 0.25s;
+    }
+    .btn-clear:hover { color: #e07070; }
+
+    /* ── Kotak Form Pemesanan ── */
+    .form-box {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(228,168,56,0.15);
+      border-radius: 4px; padding: 1.75rem;
+    }
+    .form-box-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.25rem; font-weight: 700;
+      color: var(--krim); margin-bottom: 1.5rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid rgba(250,243,232,0.1);
+    }
+
+    /* Dua input sejajar (Nama | No. WA) */
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    @media (max-width: 560px) { .form-row { grid-template-columns: 1fr; } }
+    .form-group { margin-bottom: 1.1rem; }
+
+    /* Pilihan metode pembayaran dengan radio button */
+    .payment-opts { display: grid; grid-template-columns: repeat(3,1fr); gap: 0.6rem; }
+    @media (max-width: 480px) { .payment-opts { grid-template-columns: 1fr; } }
+    .payment-opt {
+      display: flex; align-items: center; gap: 0.5rem;
+      padding: 0.65rem 0.85rem; border-radius: 3px;
+      border: 1.5px solid rgba(250,243,232,0.18);
+      color: var(--krim); font-size: 0.84rem; cursor: pointer;
+      transition: border-color 0.25s, background 0.25s;
+    }
+    .payment-opt:hover { border-color: var(--kunyit); }
+
+    /* accent-color: warna lingkaran radio button saat dipilih */
+    .payment-opt input[type="radio"] { accent-color: var(--kunyit); }
+  </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="navbar-inner">
+    <a href="index.html" class="navbar-logo">
+      <div class="navbar-logo-icon">DN</div>
+      <div class="navbar-logo-text">Dapur <span>Nusantara</span></div>
+    </a>
+    <ul class="navbar-links">
+      <li><a href="index.html">Beranda</a></li>
+      <li><a href="profil.html">Profil</a></li>
+      <li><a href="makanan-khas.html">Makanan Khas</a></li>
+      <li><a href="menu.html">Menu</a></li>
+      <li><a href="pemesanan.html" class="active">Pemesanan</a></li>
+      <li><a href="kontak.html">Kontak</a></li>
+      <li class="btn-nav-wrap"><a href="pemesanan.html" class="btn-nav">Pesan Sekarang</a></li>
+    </ul>
+    <button class="hamburger" aria-label="Menu">
+      <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
+      </svg>
+    </button>
+  </div>
+  <div class="mobile-menu">
+    <a href="index.html">Beranda</a>
+    <a href="profil.html">Profil</a>
+    <a href="makanan-khas.html">Makanan Khas</a>
+    <a href="menu.html">Menu</a>
+    <a href="pemesanan.html">Pemesanan</a>
+    <a href="kontak.html">Kontak</a>
+    <a href="pemesanan.html" class="btn btn-dark" style="text-align:center">Pesan Sekarang</a>
+  </div>
+</nav>
+
+
+<!-- PAGE HEADER -->
+<header class="page-header">
+  <div class="breadcrumb"><a href="index.html">Beranda</a> > <span>Pemesanan</span></div>
+  <p class="page-header-label section-label">✦ Mudah & Cepat</p>
+  <h1 class="page-header-title">Form <em>Pemesanan</em></h1>
+  <p class="page-header-sub">Isi form di bawah, pesanan dikirim via WhatsApp</p>
+  <div class="page-header-wave">
+    <svg viewBox="0 0 1440 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0 60L48 52C96 44 192 28 288 24C384 20 480 28 576 36C672 44 768 52 864 48C960 44 1056 28 1152 24C1248 20 1344 28 1392 32L1440 36V60H0Z" fill="#7B2D00"/>
+    </svg>
+  </div>
+</header>
+
+
+<!-- SECTION: Form Pemesanan -->
+<section class="order-section">
+  <div class="container">
+    <div class="order-grid">
+
+      <!-- Kolom kiri: Keranjang & Info Pengiriman -->
+      <div>
+        <!-- Keranjang belanja — diisi oleh JS renderCart() -->
+        <div class="cart-box fade-in">
+          <div class="cart-box-title">🛒 Keranjang Pesanan</div>
+
+          <!-- #cart-items: target render JS, isinya diganti dinamis -->
+          <div id="cart-items">
+            <p class="cart-empty">Belum ada item.<br/>Pilih dulu di halaman <a href="menu.html" style="color:var(--kunyit)">Menu</a>!</p>
+          </div>
+
+          <!-- Baris total harga — #cart-total diupdate JS -->
+          <div class="cart-total-row">
+            <span class="cart-total-label">Total</span>
+            <span class="cart-total-val" id="cart-total">Rp 0</span>
+          </div>
+          <div class="cart-actions">
+            <button class="btn-clear" onclick="clearCart()">🗑 Kosongkan keranjang</button>
+          </div>
+        </div>
+
+        <!-- Informasi pengiriman (statis) -->
+        <div style="background:rgba(255,255,255,0.05); border:1px solid rgba(228,168,56,0.15); border-radius:4px; padding:1.25rem; margin-top:1.25rem;" class="fade-in delay-1">
+          <p style="font-size:0.78rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--kunyit); margin-bottom:0.75rem;">Info Pengiriman</p>
+          <p style="font-size:0.84rem; color:rgba(250,243,232,0.6); line-height:1.75;">
+            🚴 Free ongkir min. Rp 75.000<br/>
+            ⏱ Estimasi 30-60 menit<br/>
+            🗺 Area pengiriman: Kota Palembang<br/>
+            📞 Konfirmasi via WhatsApp
+          </p>
+        </div>
+      </div>
+
+      <!-- ── Kolom kanan: Form Detail Pemesanan ── -->
+      <div class="form-box fade-in delay-1">
+        <div class="form-box-title">📋 Detail Pemesanan</div>
+
+        <!-- Nama & No. WA dalam satu baris -->
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label form-label-light">Nama Lengkap *</label>
+            <input type="text" id="nama" class="form-input form-input-dark" placeholder="Contoh: Budi Santoso"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label form-label-light">No. WhatsApp *</label>
+            <!-- type="tel" → keyboard angka di HP -->
+            <input type="tel" id="wa" class="form-input form-input-dark" placeholder="08xxxxxxxxxx"/>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label form-label-light">Alamat Lengkap *</label>
+          <input type="text" id="alamat" class="form-input form-input-dark" placeholder="Jl. Merdeka No. 10, Kel. Ilir, Palembang"/>
+        </div>
+
+        <!-- Tanggal & jam pengiriman dalam satu baris -->
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label form-label-light">Tanggal Pengiriman</label>
+            <!-- type="date" → tampilkan date picker bawaan browser -->
+            <input type="date" id="tanggal" class="form-input form-input-dark"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label form-label-light">Jam Pengiriman</label>
+            <select id="jam" class="form-input form-input-dark">
+              <option value="">Pilih Jam</option>
+              <option>08:00 - 10:00</option>
+              <option>10:00 - 12:00</option>
+              <option>12:00 - 14:00</option>
+              <option>14:00 - 16:00</option>
+              <option>16:00 - 18:00</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label form-label-light">Item yang Dipesan *</label>
+          <!-- textarea ini otomatis terisi oleh JS renderCart() dari data cart -->
+          <textarea id="input-pesanan" class="form-input form-input-dark" rows="3"
+            placeholder="Contoh: 2x Rendang Padang, 1x Soto Betawi ...&#10;(Otomatis terisi dari keranjang)"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label form-label-light">Catatan Tambahan</label>
+          <textarea id="catatan" class="form-input form-input-dark" rows="2"
+            placeholder="Tidak pedas, tanpa bawang, ekstra sambal, dll..."></textarea>
+        </div>
+
+        <!-- Metode pembayaran: radio button dikemas dalam <label> agar area klik lebih luas -->
+        <div class="form-group">
+          <label class="form-label form-label-light">Metode Pembayaran</label>
+          <div class="payment-opts">
+            <label class="payment-opt">
+              <input type="radio" name="payment" value="Transfer Bank"> Transfer Bank
+            </label>
+            <label class="payment-opt">
+              <input type="radio" name="payment" value="COD"> COD
+            </label>
+            <label class="payment-opt">
+              <input type="radio" name="payment" value="E-Wallet"> E-Wallet
+            </label>
+          </div>
+        </div>
+
+        <!-- Tombol submit: memanggil submitOrder() di main.js -->
+        <button onclick="submitOrder()" class="btn btn-primary btn-full"
+                style="margin-top:0.5rem; font-size:0.9rem; padding:0.9rem;">
+          📱 Kirim Pesanan via WhatsApp
+        </button>
+        <p style="font-size:0.76rem; color:rgba(250,243,232,0.35); text-align:center; margin-top:0.6rem;">
+          Anda akan diarahkan ke WhatsApp untuk konfirmasi pesanan
+        </p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- SECTION: Cara Memesan (panduan 4 langkah) -->
+<section class="section" style="background:white;">
+  <div class="container">
+    <div style="text-align:center; margin-bottom:2.5rem;">
+      <p class="section-label fade-in">✦ Panduan</p>
+      <h2 class="section-title fade-in delay-1" style="margin-top:0.4rem">Cara <em>Memesan</em></h2>
+      <div class="divider divider-center fade-in delay-2"></div>
+    </div>
+
+    <!-- grid-4: 4 langkah pemesanan -->
+    <div class="grid-4">
+      <div style="text-align:center;" class="fade-in delay-1">
+        <div style="font-size:2rem; margin-bottom:0.75rem;">1️⃣</div>
+        <p style="font-family:'Playfair Display',serif; font-weight:700; color:var(--batik); margin-bottom:0.4rem;">Pilih Menu</p>
+        <p style="font-size:0.84rem; color:rgba(44,26,14,0.6); line-height:1.65;">Kunjungi halaman Menu dan klik "+ Keranjang" pada hidangan pilihan Anda.</p>
+      </div>
+      <div style="text-align:center;" class="fade-in delay-2">
+        <div style="font-size:2rem; margin-bottom:0.75rem;">2️⃣</div>
+        <p style="font-family:'Playfair Display',serif; font-weight:700; color:var(--batik); margin-bottom:0.4rem;">Isi Form</p>
+        <p style="font-size:0.84rem; color:rgba(44,26,14,0.6); line-height:1.65;">Lengkapi data diri, alamat pengiriman, dan pilih metode pembayaran.</p>
+      </div>
+      <div style="text-align:center;" class="fade-in delay-3">
+        <div style="font-size:2rem; margin-bottom:0.75rem;">3️⃣</div>
+        <p style="font-family:'Playfair Display',serif; font-weight:700; color:var(--batik); margin-bottom:0.4rem;">Kirim via WA</p>
+        <p style="font-size:0.84rem; color:rgba(44,26,14,0.6); line-height:1.65;">Klik tombol kirim, pesanan otomatis diteruskan ke WhatsApp kami.</p>
+      </div>
+      <div style="text-align:center;" class="fade-in delay-3">
+        <div style="font-size:2rem; margin-bottom:0.75rem;">4️⃣</div>
+        <p style="font-family:'Playfair Display',serif; font-weight:700; color:var(--batik); margin-bottom:0.4rem;">Terima Pesanan</p>
+        <p style="font-size:0.84rem; color:rgba(44,26,14,0.6); line-height:1.65;">Kami konfirmasi dan antar pesanan dalam 30–60 menit ke rumah Anda.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.85rem;">
+          <div class="navbar-logo-icon">DN</div>
+          <div class="navbar-logo-text" style="color:var(--krim)">Dapur <span>Nusantara</span></div>
+        </div>
+        <p class="footer-text">Melestarikan kekayaan kuliner Indonesia dengan cinta dan dedikasi sejak 2015.</p>
+        <div style="display:flex; gap:0.5rem; margin-top:1rem;">
+          <span class="tag tag-solid-rempah">Halal MUI</span>
+        </div>
+      </div>
+      <div>
+        <div class="footer-title">Halaman</div>
+        <div class="footer-links">
+          <a href="index.html">Beranda</a>
+          <a href="profil.html">Profil UMKM</a>
+          <a href="makanan-khas.html">Makanan Khas</a>
+          <a href="menu.html">Menu</a>
+          <a href="pemesanan.html">Pemesanan</a>
+          <a href="kontak.html">Kontak</a>
+        </div>
+      </div>
+      <div>
+        <div class="footer-title">Jam Operasional</div>
+        <p class="footer-text">Senin - Jumat: 07.00 - 20.00<br/>Sabtu: 07.00 - 17.00<br/>Minggu: Tutup</p>
+        <div style="margin-top:1rem;">
+          <div class="footer-title">Kontak</div>
+          <p class="footer-text">📞 0812-3456-7890<br/>📍 Tanjung Enim, Sumatera Selatan</p>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2026 Dapur Nusantara. Dibuat untuk melestarikan kuliner Indonesia.</p>
+      <p>Praktikum Pemrograman Web - Davin Gabriel J</p>
+    </div>
+  </div>
+</footer>
+
+<div class="toast"></div>
+<script src="js/main.js"></script>
+</body>
+</html>

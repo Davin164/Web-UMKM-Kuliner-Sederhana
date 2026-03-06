@@ -1,0 +1,349 @@
+/* ============================================================
+   style.css — Dapur Nusantara
+   File CSS global yang dipakai oleh semua halaman HTML.
+   ============================================================ */
+
+
+/* ── IMPORT FONT dari Google Fonts ──
+   Playfair Display : font serif elegan untuk judul
+   DM Sans          : font sans-serif bersih untuk teks biasa
+   Keduanya di-load dari internet saat halaman dibuka           */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=DM+Sans:wght@400;500;600&display=swap');
+
+
+/* ── CSS VARIABLES (Custom Properties) ──
+   Definisikan warna di satu tempat agar mudah diubah & konsisten.
+   Diakses dengan: var(--nama-variabel)
+   :root = elemen paling atas (setara <html>), scope-nya global    */
+:root {
+  --coklat:  #2C1A0E; /* coklat gelap, warna teks utama           */
+  --batik:   #7B2D00; /* merah bata tua, warna primer/aksen utama */
+  --rempah:  #C4622D; /* oranye kecoklatan, warna sekunder        */
+  --kunyit:  #E8A838; /* kuning kunyit, untuk highlight/aksen     */
+  --daun:    #3D6B4F; /* hijau daun, untuk tag "alami/segar"      */
+  --krim:    #FAF3E8; /* putih krem, warna background utama       */
+}
+
+
+/* ── CSS RESET ──
+   Menghapus margin, padding, dan box-sizing default browser
+   agar tampilan konsisten di semua browser.
+   *::before dan *::after = pseudo-element (konten virtual CSS)   */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* scroll-behavior: smooth → animasi halus saat klik anchor link (#section) */
+html { scroll-behavior: smooth; }
+
+/* overflow-x: hidden → cegah konten meluber ke kanan secara horizontal */
+body { font-family: 'DM Sans', sans-serif; background: var(--krim); color: var(--coklat); overflow-x: hidden; }
+
+a { text-decoration: none; color: inherit; }
+ul { list-style: none; }
+
+/* max-width: 100% → gambar tidak pernah lebih lebar dari containernya */
+img { max-width: 100%; display: block; }
+
+
+/* ── LAYOUT ── */
+
+/* .container: pembungkus konten agar tidak terlalu lebar di layar besar */
+.container { max-width: 1100px; margin: 0 auto; padding: 0 1.5rem; }
+
+/* .section: jarak atas-bawah standar untuk setiap section halaman */
+.section    { padding: 5rem 0; }
+
+
+/* ── TYPOGRAPHY (Gaya Teks) ── */
+
+/* Label kecil di atas judul section, biasanya "✦ Sesuatu" */
+.section-label {
+  font-size: 0.72rem; font-weight: 700;
+  letter-spacing: 0.15em; /* jarak antar huruf lebih lebar */
+  text-transform: uppercase; /* semua huruf kapital */
+  color: var(--rempah);
+}
+
+/* Judul utama section
+   clamp(min, preferred, max): ukuran font responsif otomatis
+   → minimal 1.9rem, idealnya 4% lebar viewport, maksimal 2.8rem */
+.section-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.9rem, 4vw, 2.8rem);
+  font-weight: 700; line-height: 1.15; color: var(--batik);
+}
+.section-title em       { font-style: italic; color: var(--rempah); }
+.section-title-light    { color: var(--krim); } /* versi terang untuk bg gelap */
+.section-title-light em { color: var(--kunyit); }
+
+/* Teks deskripsi di bawah judul */
+.section-desc { font-size: 1rem; color: rgba(44,26,14,0.65); line-height: 1.8; }
+
+/* Garis pendek dekoratif di bawah judul */
+.divider        { width: 48px; height: 3px; background: linear-gradient(90deg, var(--rempah), var(--kunyit)); border-radius: 2px; margin: 0.75rem 0; }
+.divider-center { margin: 0.75rem auto; } /* versi tengah */
+
+
+/* ── NAVBAR ── */
+
+/* position: fixed → navbar tetap di atas meski halaman di-scroll
+   z-index: 999   → pastikan navbar selalu di depan elemen lain
+   backdrop-filter: blur → efek kaca buram di belakang navbar     */
+.navbar {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 999;
+  background: rgba(250,243,232,0.95);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(196,98,45,0.12);
+  transition: box-shadow 0.3s;
+}
+
+/* Class ini ditambahkan via JS saat user scroll ke bawah */
+.navbar.scrolled { box-shadow: 0 2px 20px rgba(44,26,14,0.1); }
+
+.navbar-inner {
+  max-width: 1100px; margin: 0 auto; padding: 0 1.5rem;
+  height: 62px; display: flex; align-items: center; justify-content: space-between;
+}
+.navbar-logo { display: flex; align-items: center; gap: 0.5rem; }
+.navbar-logo-icon {
+  width: 32px; height: 32px; background: var(--batik); border-radius: 3px;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--krim); font-family: 'Playfair Display', serif; font-weight: 700; font-size: 0.78rem;
+}
+.navbar-logo-text { font-family: 'Playfair Display', serif; font-weight: 700; font-size: 1.05rem; color: var(--batik); }
+.navbar-logo-text span { color: var(--rempah); }
+.navbar-links { display: flex; align-items: center; gap: 1.75rem; }
+.navbar-links a {
+  font-size: 0.875rem; font-weight: 500; color: var(--coklat);
+  position: relative; padding-bottom: 2px; transition: color 0.25s;
+}
+
+/* Garis bawah animasi saat hover: mulai width 0, melebar ke 100% */
+.navbar-links a::after {
+  content: ''; position: absolute; bottom: -2px; left: 0;
+  width: 0; height: 2px; background: var(--rempah); transition: width 0.25s;
+}
+.navbar-links a:hover,
+.navbar-links a.active { color: var(--rempah); }
+.navbar-links a:hover::after,
+.navbar-links a.active::after { width: 100%; }
+
+/* Tombol "Pesan Sekarang" di navbar — pakai !important untuk override style .navbar-links a */
+.btn-nav {
+  background: var(--batik) !important; color: var(--krim) !important;
+  padding: 0.4rem 1rem; border-radius: 3px;
+  font-size: 0.8rem !important; font-weight: 600 !important; transition: background 0.25s !important;
+}
+.btn-nav::after { display: none !important; } /* sembunyikan garis bawah hover */
+.btn-nav:hover  { background: var(--rempah) !important; }
+
+/* Tombol hamburger (☰) untuk mobile — disembunyikan di desktop */
+.hamburger { display: none; background: none; border: none; cursor: pointer; color: var(--coklat); }
+
+/* Menu mobile yang terlipat — ditampilkan via JS saat hamburger diklik */
+.mobile-menu {
+  display: none; flex-direction: column; gap: 0.85rem;
+  padding: 1rem 1.5rem 1.25rem;
+  border-top: 1px solid rgba(196,98,45,0.12); background: var(--krim);
+}
+.mobile-menu.open { display: flex; } /* class 'open' ditambahkan JS */
+.mobile-menu a { font-size: 0.9rem; font-weight: 500; color: var(--coklat); transition: color 0.25s; }
+.mobile-menu a:hover { color: var(--rempah); }
+
+/* Media Query: aturan CSS yang hanya berlaku di ukuran layar tertentu
+   max-width: 860px → berlaku ketika lebar layar ≤ 860px (tablet/HP) */
+@media (max-width: 860px) {
+  .navbar-links, .btn-nav-wrap { display: none; } /* sembunyikan link desktop */
+  .hamburger { display: block; }                  /* tampilkan tombol hamburger */
+}
+
+
+/* ── PAGE HEADER ──
+   Banner judul di bagian atas setiap halaman (selain beranda)    */
+.page-header {
+  background: var(--batik);
+  padding: 7.5rem 1.5rem 4.5rem;
+  text-align: center; position: relative; overflow: hidden;
+}
+
+/* Efek gradasi cahaya di belakang konten header
+   position: absolute; inset: 0 → cover seluruh area parent      */
+.page-header::before {
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 70% 30%, rgba(228,168,56,0.18) 0%, transparent 60%);
+}
+.page-header-label   { position: relative; }
+.page-header-title   { font-family: 'Playfair Display', serif; font-size: clamp(2.2rem, 5vw, 3.5rem); font-weight: 700; color: var(--krim); line-height: 1.1; margin-top: 0.4rem; position: relative; }
+.page-header-title em { color: var(--kunyit); font-style: italic; }
+.page-header-sub     { font-size: 1rem; color: rgba(250,243,232,0.6); margin-top: 0.6rem; position: relative; }
+
+/* SVG gelombang di bagian bawah page header untuk transisi halus ke konten */
+.page-header-wave    { position: absolute; bottom: -1px; left: 0; right: 0; line-height: 0; }
+
+.breadcrumb { display: flex; align-items: center; justify-content: center; gap: 0.5rem; font-size: 0.78rem; color: rgba(250,243,232,0.45); margin-bottom: 0.4rem; }
+.breadcrumb a { color: rgba(250,243,232,0.45); transition: color 0.25s; }
+.breadcrumb a:hover { color: var(--kunyit); }
+.breadcrumb span { color: var(--kunyit); }
+
+
+/* ── BUTTONS ── */
+
+/* Base style tombol — semua tombol mewarisi ini */
+.btn {
+  display: inline-block; font-weight: 600; font-size: 0.85rem;
+  letter-spacing: 0.04em; padding: 0.75rem 1.75rem;
+  border-radius: 3px; border: none; cursor: pointer; transition: all 0.25s; text-align: center;
+}
+.btn-primary      { background: var(--kunyit); color: var(--coklat); }
+.btn-primary:hover { background: #d4960f; transform: translateY(-2px); box-shadow: 0 6px 18px rgba(212,150,15,0.32); }
+.btn-dark         { background: var(--batik); color: var(--krim); }
+.btn-dark:hover   { background: var(--rempah); transform: translateY(-2px); }
+.btn-outline      { background: transparent; color: var(--batik); border: 2px solid var(--batik); }
+.btn-outline:hover { background: var(--batik); color: var(--krim); }
+.btn-outline-light { background: transparent; color: var(--krim); border: 1.5px solid rgba(250,243,232,0.4); }
+.btn-outline-light:hover { border-color: var(--kunyit); color: var(--kunyit); }
+.btn-green        { background: var(--daun); color: white; }
+.btn-green:hover  { background: #2f5540; transform: translateY(-2px); }
+.btn-full         { width: 100%; } /* tombol memenuhi lebar containernya */
+
+
+/* ── CARD (Kartu Menu) ── */
+
+/* overflow: hidden → konten di dalam tidak boleh keluar dari batas card */
+.card { background: #fff; border-radius: 4px; border: 1px solid rgba(196,98,45,0.1); overflow: hidden; transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s; }
+.card:hover { transform: translateY(-5px); box-shadow: 0 14px 36px rgba(44,26,14,0.12); border-color: rgba(232,168,56,0.32); }
+.card-body { padding: 1.2rem; }
+
+/* Area gambar/emoji di atas card */
+.card-img  { height: 195px; background: linear-gradient(135deg, var(--rempah), var(--batik)); display: flex; align-items: center; justify-content: center; font-size: 4rem; position: relative; overflow: hidden; }
+
+/* Lapisan gradasi gelap di bawah gambar agar teks badge terbaca */
+.card-img::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, rgba(44,26,14,0.5) 0%, transparent 55%); }
+
+/* Label daerah asal di pojok kiri bawah card */
+.card-region { position: absolute; bottom: 10px; left: 10px; z-index: 2; background: rgba(250,243,232,0.9); color: var(--batik); font-size: 0.67rem; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; padding: 0.18rem 0.5rem; border-radius: 2px; }
+
+/* Badge "Terlaris", "Spesial", dll di pojok kanan atas */
+.card-badge  { position: absolute; top: 10px; right: 10px; z-index: 2; font-size: 0.67rem; font-weight: 700; padding: 0.18rem 0.5rem; border-radius: 2px; letter-spacing: 0.06em; text-transform: uppercase; }
+
+.card-title  { font-family: 'Playfair Display', serif; font-weight: 700; font-size: 1.05rem; color: var(--batik); margin-bottom: 0.25rem; }
+.card-desc   { font-size: 0.82rem; color: rgba(44,26,14,0.55); line-height: 1.5; margin-bottom: 0.85rem; }
+.card-price  { font-weight: 700; font-size: 1.05rem; color: var(--rempah); }
+.card-footer { display: flex; align-items: center; justify-content: space-between; }
+
+
+/* ── KHAS CARD (kartu di halaman Makanan Khas) ── */
+
+/* border-left: garis aksen di sisi kiri kartu */
+.card-khas { background: #fff; border-left: 4px solid var(--rempah); padding: 1.35rem; border-radius: 0 4px 4px 0; transition: border-color 0.25s, box-shadow 0.25s, transform 0.25s; }
+
+/* Hover: bergeser ke kanan sedikit (translateX) */
+.card-khas:hover { border-left-color: var(--kunyit); box-shadow: 0 6px 20px rgba(44,26,14,0.09); transform: translateX(4px); }
+.card-khas-title { font-family: 'Playfair Display', serif; font-weight: 700; font-size: 1.1rem; color: var(--batik); margin-bottom: 0.3rem; }
+.card-khas-desc  { font-size: 0.86rem; color: rgba(44,26,14,0.6); line-height: 1.7; }
+
+
+/* ── TAGS (Label Kecil) ── */
+.tag { display: inline-block; padding: 0.2rem 0.55rem; font-size: 0.67rem; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; border-radius: 2px; }
+.tag-rempah       { background: rgba(196,98,45,0.12); color: var(--rempah); }
+.tag-daun         { background: rgba(61,107,79,0.12); color: var(--daun); }
+.tag-batik        { background: rgba(123,45,0,0.1);   color: var(--batik); }
+.tag-kunyit       { background: var(--kunyit); color: var(--coklat); }
+.tag-solid-daun   { background: var(--daun);   color: white; }
+.tag-solid-batik  { background: var(--batik);  color: var(--krim); }
+.tag-solid-rempah { background: var(--rempah); color: white; }
+
+
+/* ── INFO BOX ── */
+.info-box       { background: rgba(196,98,45,0.07); border: 1px solid rgba(196,98,45,0.14); border-radius: 3px; padding: 0.9rem 1rem; }
+.info-box-label { font-size: 0.69rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--rempah); margin-bottom: 0.25rem; }
+.info-box-value { font-weight: 600; font-size: 0.92rem; }
+
+
+/* ── FORM ── */
+.form-group { display: flex; flex-direction: column; gap: 0.35rem; }
+.form-label  { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; color: var(--batik); }
+.form-label-light { color: var(--kunyit); } /* versi terang untuk bg gelap */
+.form-input {
+  padding: 0.78rem 0.95rem;
+  border: 1.5px solid rgba(196,98,45,0.22); border-radius: 3px;
+  background: #fff; font-family: 'DM Sans', sans-serif;
+  font-size: 0.92rem; color: var(--coklat); outline: none; width: 100%;
+  transition: border-color 0.25s, box-shadow 0.25s;
+}
+
+/* box-shadow ring biru saat fokus → diganti warna brand */
+.form-input:focus { border-color: var(--rempah); box-shadow: 0 0 0 3px rgba(196,98,45,0.1); }
+.form-input::placeholder { color: rgba(44,26,14,0.32); }
+
+/* Versi input untuk background gelap (di halaman pemesanan) */
+.form-input-dark { background: rgba(255,255,255,0.08); border-color: rgba(250,243,232,0.2); color: var(--krim); }
+.form-input-dark::placeholder { color: rgba(250,243,232,0.32); }
+.form-input-dark:focus { border-color: var(--kunyit); box-shadow: 0 0 0 3px rgba(228,168,56,0.14); }
+
+/* textarea: bisa di-resize secara vertikal saja oleh user */
+textarea.form-input { resize: vertical; min-height: 95px; }
+
+
+/* ── STATS BAR ── */
+.stats-bar   { background: var(--rempah); padding: 1.4rem 0; }
+.stats-grid  { max-width: 1100px; margin: 0 auto; padding: 0 1.5rem; display: grid; grid-template-columns: repeat(4,1fr); gap: 1rem; text-align: center; }
+@media (max-width: 580px) { .stats-grid { grid-template-columns: repeat(2,1fr); } }
+.stat-num    { font-family: 'Playfair Display', serif; font-size: 1.4rem; font-weight: 700; color: var(--kunyit); }
+.stat-label  { font-size: 0.74rem; color: rgba(250,243,232,0.8); margin-top: 0.15rem; }
+
+
+/* ── FOOTER ── */
+.footer       { background: var(--coklat); padding: 3rem 0 1.5rem; }
+.footer-grid  { display: grid; grid-template-columns: 1.3fr 1fr 1fr; gap: 2rem; padding-bottom: 2rem; border-bottom: 1px solid rgba(250,243,232,0.09); }
+@media (max-width: 700px) { .footer-grid { grid-template-columns: 1fr; } }
+.footer-title { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.13em; text-transform: uppercase; color: var(--kunyit); margin-bottom: 0.85rem; }
+.footer-links { display: flex; flex-direction: column; gap: 0.5rem; }
+.footer-links a { font-size: 0.86rem; color: rgba(250,243,232,0.45); transition: color 0.25s; }
+.footer-links a:hover { color: var(--krim); }
+.footer-text  { font-size: 0.86rem; color: rgba(250,243,232,0.45); line-height: 1.75; }
+.footer-bottom { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; padding-top: 1.5rem; }
+.footer-bottom p { font-size: 0.73rem; color: rgba(250,243,232,0.28); }
+
+
+/* ── FADE-IN ANIMATION ──
+   Elemen mulai tidak terlihat (opacity:0) dan sedikit ke bawah (translateY).
+   Saat class 'visible' ditambahkan via JS → elemen muncul dengan animasi.  */
+.fade-in         { opacity: 0; transform: translateY(22px); transition: opacity 0.6s ease, transform 0.6s ease; }
+.fade-in.visible { opacity: 1; transform: translateY(0); }
+
+/* Delay: membuat animasi muncul bertahap (satu per satu) */
+.delay-1 { transition-delay: 0.1s; }
+.delay-2 { transition-delay: 0.2s; }
+.delay-3 { transition-delay: 0.3s; }
+
+
+/* ── TOAST NOTIFICATION ──
+   Notifikasi kecil yang muncul di pojok kanan bawah layar.
+   Mulai posisi di luar layar (translateX 200%), masuk saat class 'show' aktif. */
+.toast { position: fixed; bottom: 1.5rem; right: 1.5rem; background: var(--daun); color: white; padding: 0.75rem 1.25rem; border-radius: 3px; font-weight: 600; font-size: 0.86rem; z-index: 9999; box-shadow: 0 6px 20px rgba(0,0,0,0.16); transform: translateX(200%); transition: transform 0.4s ease; }
+.toast.show { transform: translateX(0); } /* geser masuk ke layar */
+
+
+/* ── GRID HELPERS ──
+   Kelas utilitas untuk membuat layout grid dengan cepat.          */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+.grid-3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.5rem; }
+.grid-4 { display: grid; grid-template-columns: repeat(4,1fr); gap: 1.25rem; }
+
+/* Responsif: kolom menyesuaikan lebar layar */
+@media (max-width: 960px) { .grid-4 { grid-template-columns: repeat(2,1fr); } }
+@media (max-width: 768px) { .grid-2, .grid-3 { grid-template-columns: 1fr; } }
+@media (max-width: 480px) { .grid-4 { grid-template-columns: 1fr; } }
+
+
+/* ── CARD IMAGE: style untuk <img> di dalam .card-img ──
+   Agar gambar mengisi penuh area card dan tidak terdistorsi.      */
+.card-img img {
+  position: absolute;        /* ambil dari flow normal */
+  inset: 0;                  /* singkatan: top:0; right:0; bottom:0; left:0 */
+  width: 100%;
+  height: 100%;
+  object-fit: cover;         /* gambar crop ke tengah, tidak stretch */
+  object-position: center;
+  z-index: 0;                /* di belakang overlay gradasi (::after z-index tidak di-set = auto) */
+}

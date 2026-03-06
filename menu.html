@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dapur Nusantara - Menu</title>
+  <link rel="stylesheet" href="css/style.css"/>
+  <style>
+    /* Tombol filter kategori menu */
+    .filter-bar {
+      display: flex; flex-wrap: wrap; gap: 0.6rem;
+      justify-content: center; margin-bottom: 2.5rem;
+    }
+    .filter-btn {
+      padding: 0.45rem 1.2rem; border-radius: 3px;
+      border: 1.5px solid rgba(196,98,45,0.25);
+      background: white; color: var(--coklat);
+      font-size: 0.82rem; font-weight: 500;
+      cursor: pointer; transition: all 0.25s;
+    }
+    .filter-btn:hover,
+    .filter-btn.active {
+      background: var(--batik); color: var(--krim);
+      border-color: var(--batik);
+    }
+
+    /* Grid menu: 4 kolom di desktop */
+    .menu-grid {
+      display: grid; grid-template-columns: repeat(4,1fr);
+      gap: 1.25rem;
+    }
+    @media (max-width: 960px) { .menu-grid { grid-template-columns: repeat(2,1fr); } }
+    @media (max-width: 480px) { .menu-grid { grid-template-columns: 1fr; } }
+
+    /* .menu-item adalah wrapper tiap card — display:block agar card full lebar kolom */
+    .menu-item { display: block; }
+
+    /* Tombol "+ Keranjang" di tiap card */
+    .btn-add {
+      padding: 0.38rem 0.85rem;
+      font-size: 0.78rem; font-weight: 600;
+      background: var(--batik); color: var(--krim);
+      border: none; border-radius: 3px; cursor: pointer;
+      transition: background 0.25s;
+    }
+    .btn-add:hover { background: var(--rempah); }
+
+    .menu-table-wrap {
+      overflow-x: auto; /* scroll horizontal di layar kecil */
+      margin-top: 1rem;
+    }
+    .menu-table {
+      width: 100%;
+      border-collapse: collapse; /* gabungkan border antar sel */
+      font-size: 0.88rem;
+    }
+    /* thead = baris judul kolom tabel */
+    .menu-table thead tr {
+      background: var(--batik);
+      color: var(--krim);
+    }
+    .menu-table thead th {
+      padding: 0.85rem 1rem;  /* padding = jarak teks dari tepi sel */
+      text-align: left;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      border: 1px solid rgba(250,243,232,0.15); /* border tiap sel header */
+    }
+    /* tbody = baris data tabel */
+    .menu-table tbody tr {
+      border-bottom: 1px solid rgba(196,98,45,0.12);
+      transition: background 0.2s;
+    }
+    /* :nth-child(even) → beri warna beda setiap baris genap (zebra striping)
+       agar baris mudah dibedakan oleh mata pengguna                         */
+    .menu-table tbody tr:nth-child(even) {
+      background: rgba(196,98,45,0.04);
+    }
+    .menu-table tbody tr:hover {
+      background: rgba(232,168,56,0.1); /* highlight saat hover */
+    }
+    .menu-table tbody td {
+      padding: 0.75rem 1rem; /* box model: padding seragam 5px vertikal */
+      vertical-align: middle;
+      border: 1px solid rgba(196,98,45,0.1); /* border tiap sel data */
+      color: var(--coklat);
+    }
+    /* Kolom harga - warna aksen agar mudah dilihat */
+    .menu-table .td-harga {
+      font-weight: 700;
+      color: var(--rempah);
+      white-space: nowrap; /* harga tidak terpotong ke baris berikutnya */
+    }
+    /* Badge kategori di kolom tabel */
+    .menu-table .td-kat span {
+      display: inline-block;
+      padding: 0.15rem 0.5rem;
+      border-radius: 2px;
+      font-size: 0.67rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .kat-berat   { background: rgba(123,45,0,0.1);   color: var(--batik); }
+    .kat-ringan  { background: rgba(61,107,79,0.12);  color: var(--daun); }
+    .kat-minuman { background: rgba(196,98,45,0.12);  color: var(--rempah); }
+    /* Tombol "+ Keranjang" di dalam tabel */
+    .menu-table .btn-add-tbl {
+      padding: 0.3rem 0.75rem;
+      font-size: 0.75rem; font-weight: 600;
+      background: var(--batik); color: var(--krim);
+      border: none; border-radius: 3px; cursor: pointer;
+      transition: background 0.25s; white-space: nowrap;
+    }
+    .menu-table .btn-add-tbl:hover { background: var(--rempah); }
+  </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="navbar-inner">
+    <a href="index.html" class="navbar-logo">
+      <div class="navbar-logo-icon">DN</div>
+      <div class="navbar-logo-text">Dapur <span>Nusantara</span></div>
+    </a>
+    <ul class="navbar-links">
+      <li><a href="index.html">Beranda</a></li>
+      <li><a href="profil.html">Profil</a></li>
+      <li><a href="makanan-khas.html">Makanan Khas</a></li>
+      <li><a href="menu.html" class="active">Menu</a></li>
+      <li><a href="pemesanan.html">Pemesanan</a></li>
+      <li><a href="kontak.html">Kontak</a></li>
+      <li class="btn-nav-wrap"><a href="pemesanan.html" class="btn-nav">Pesan Sekarang</a></li>
+    </ul>
+    <button class="hamburger" aria-label="Menu">
+      <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
+      </svg>
+    </button>
+  </div>
+  <div class="mobile-menu">
+    <a href="index.html">Beranda</a>
+    <a href="profil.html">Profil</a>
+    <a href="makanan-khas.html">Makanan Khas</a>
+    <a href="menu.html">Menu</a>
+    <a href="pemesanan.html">Pemesanan</a>
+    <a href="kontak.html">Kontak</a>
+    <a href="pemesanan.html" class="btn btn-dark" style="text-align:center">Pesan Sekarang</a>
+  </div>
+</nav>
+
+
+<!-- PAGE HEADER -->
+<header class="page-header">
+  <!-- Breadcrumb: navigasi posisi halaman saat ini -->
+  <div class="breadcrumb"><a href="index.html">Beranda</a> > <span>Menu</span></div>
+  <p class="page-header-label section-label">✦ Pilihan Lengkap</p>
+  <h1 class="page-header-title">Menu <em>Kami</em></h1>
+  <p class="page-header-sub">16+ pilihan hidangan Nusantara untuk setiap selera</p>
+  <!-- SVG gelombang dekoratif bawah header -->
+  <div class="page-header-wave">
+    <svg viewBox="0 0 1440 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0 60L48 52C96 44 192 28 288 24C384 20 480 28 576 36C672 44 768 52 864 48C960 44 1056 28 1152 24C1248 20 1344 28 1392 32L1440 36V60H0Z" fill="#FAF3E8"/>
+    </svg>
+  </div>
+</header>
+
+
+<!-- SECTION: Daftar Menu -->
+<section class="section">
+  <div class="container">
+
+    <!-- ── Filter Kategori ──
+         data-filter dipakai JS untuk mencocokkan dengan data-cat di tiap card -->
+    <div class="filter-bar fade-in">
+      <button class="filter-btn active" onclick="filterMenu('semua')"    data-filter="semua">Semua</button>
+      <button class="filter-btn"        onclick="filterMenu('berat')"    data-filter="berat">Makanan Berat</button>
+      <button class="filter-btn"        onclick="filterMenu('ringan')"   data-filter="ringan">Makanan Ringan</button>
+      <button class="filter-btn"        onclick="filterMenu('minuman')"  data-filter="minuman">Minuman</button>
+    </div>
+
+    <!-- Grid Menu -->
+    <div class="menu-grid" id="menu-grid">
+
+      <!-- data-cat="berat" → dipakai JS filterMenu() untuk show/hide -->
+      <div class="card menu-item fade-in" data-cat="berat">
+        <div class="card-img">
+          <img src="assets/rendang.webp" alt="Rendang Padang"/>
+          <span class="card-badge tag-kunyit">Terlaris</span>
+          <span class="card-region">Sumatera Barat</span>
+        </div>
+        <div class="card-body">
+          <div class="card-title">Rendang Padang</div>
+          <div class="card-desc">Daging sapi empuk, 40+ rempah pilihan</div>
+          <div class="card-footer">
+            <span class="card-price">Rp 45.000</span>
+            <!-- addToCart(nama, harga) dipanggil saat tombol diklik — harga dalam angka (integer) -->
+            <button class="btn-add" onclick="addToCart('Rendang Padang', 45000)">+ Keranjang</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card menu-item fade-in delay-1" data-cat="berat">
+        <div class="card-img">
+          <img src="assets/pempek.webp" alt="Pempek Kapal Selam"/>
+          <span class="card-badge tag-solid-daun">Spesial</span>
+          <span class="card-region">Sumatera Selatan</span>
+        </div>
+        <div class="card-body">
+          <div class="card-title">Pempek Kapal Selam</div>
+          <div class="card-desc">Ikan tenggiri segar, telur, cuka khas</div>
+          <div class="card-footer">
+            <span class="card-price">Rp 20.000</span>
+            <button class="btn-add" onclick="addToCart('Pempek Kapal Selam', 20000)">+ Keranjang</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card menu-item fade-in delay-2" data-cat="berat">
+        <div class="card-img">
+          <img src="assets/soto-betawi.webp" alt="Soto Betawi"/>
+          <span class="card-region">Jakarta</span>
+        </div>
+        <div class="card-body">
+          <div class="card-title">Soto Betawi</div>
+          <div class="card-desc">Kuah santan susu, daging sapi, tomat</div>
+          <div class="card-footer">
+            <span class="card-price">Rp 35.000</span>
+            <button class="btn-add" onclick="addToCart('Soto Betawi', 35000)">+ Keranjang</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card menu-item fade-in delay-3" data-cat="berat">
+        <div class="card-img">
+          <img src="assets/nasi-liwet.webp" alt="Nasi Liwet Solo"/>
+          <span class="card-region">Jawa Tengah</span>
+        </div>
+        <div class="card-body">
+          <div class="card-title">Nasi Liwet Solo</div>
+          <div class="card-desc">Santan, opor ayam, serundeng, sambal</div>
+          <div class="card-footer">
+            <span class="card-price">Rp 28.000</span>
+            <button class="btn-add" onclick="addToCart('Nasi Liwet Solo', 28000)">+ Keranjang</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card menu-item fade-in" data-cat="berat">
+        <div class="card-img">
+          <img src="assets/bebek-betutu.webp" alt="Bebek Betutu"/>
+          <span class="card-badge tag-solid-rempah">Premium</span>
+          <span class="card-region">Bali</span>
+        </div>
+        <div class="card-body">
+          <div class="card-title">Bebek Betutu</div>
+          <div class="card-desc">Base genep, daun pisang, panggang 8 jam</div>
+          <div class="card-footer">
+            <span class="card-price">Rp 65.000</span>
+            <button class="btn-add" onclick="addToCart('Bebek Betutu', 65000)">+ Keranjang</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card menu-item fade-in delay-1" data-cat="berat">
+        <div class="card-img">
+          <img src="assets/ikan-kuah-kuning.webp" alt="Ikan Kuah Kuning"/>
+          <span class="card-region">Maluku</span>
+        </div>
+        <div class="card-body">
+          <div class="card-title">Ikan Kuah Kuning</div>
+          <div class="card-desc">Kakap segar, kunyit, belimbing wuluh</div>
+          <div class="card-footer">
+            <span class="card-price">Rp 55.000</span>
+            <button class="btn-add" onclick="addToCart('Ikan Kuah Kuning', 55000)">+ Keranjang</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card menu-item fade-in delay-2" data-cat="berat">
+        <div class="card-img">
+          <img src="assets/coto-makassar.webp" alt="Coto Makassar"/>
+          <span class="card-region">Sulawesi Selatan</span>
+        </div>
+        <div class="card-body">
+          <div class="card-title">Coto Makassar</div>
+          <div class="card-desc">Sup jeroan sapi, 40 rempah, ketupat buras</div>
+          <div class="card-footer">
+            <span class="card-price">Rp 38.000</span>
+            <button class="btn-add" onclick="addToCart('Coto Makassar', 38000)">+ Keranjang</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card menu-item fade-in delay-3" data-cat="berat">
+        <div class="card-img">
+          <img src="assets/gudeg.webp" alt="Gudeg Jogja"/>
+          <span class="card-region">Yogyakarta</span>
+        </div>
+        <div class="card-body">
+          <div class="card-title">Gudeg Jogja</div>
+          <div class="card-desc">Nangka muda, santan, gula jawa, opor</div>
+          <div class="card-footer">
+            <span class="card-price">Rp 25.000</span>
+            <button class="btn-add" onclick="addToCart('Gudeg Jogja', 25000)">+ Keranjang</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card menu-item fade-in" data-cat="ringan">
+        <div class="card-img">
+          <img src="assets/karedok.webp" alt="Karedok Segar"/>
+          <span class="card-region">Jawa Barat</span>
+        </div>
+        <div class="card-body">
+          <div class="card-title">Karedok Segar</div>
+          <div class="card-desc">Sayur segar, bumbu kacang, terasi khas</div>
+          <div class="card-footer">
+            <span class="card-price">Rp 18.000</span>
+            <button class="btn-add" onclick="addToCart('Karedok Segar', 18000)">+ Keranjang</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card menu-item fade-in delay-1" data-cat="ringan">
+        <div class="card-img">
+          <img src="assets/martabak.webp" alt="Martabak Manis"/>
+          <span class="card-region">Jawa Timur</span>
+        </div>
+        <div class="card-body">
+          <div class="card-title">Martabak Manis</div>
+          <div class="card-desc">Tebal, lembut, isi coklat keju dan kacang</div>
+          <div class="card-footer">
+            <span class="card-price">Rp 22.000</span>
+            <button class="btn-add" onclick="addToCart('Martabak Manis', 22000)">+ Keranjang</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card menu-item fade-in delay-2" data-cat="ringan">
+        <div class="card-img">
+          <img src="assets/klepon.webp" alt="Klepon"/>
+          <span class="card-region">Nasional</span>
+        </div>
+        <div class="card-body">
+          <div class="card-title">Klepon</div>
+          <div class="card-desc">Bola ketan hijau isi gula merah, kelapa</div>
+          <div class="card-footer">
+            <span class="card-price">Rp 10.000</span>
+            <button class="btn-add" onclick="addToCart('Klepon', 10000)">+ Keranjang</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card menu-item fade-in delay-3" data-cat="ringan">
+        <div class="card-img">
+          <img src="assets/pempek-lenjer.webp" alt="Pempek Lenjer"/>
+          <span class="card-region">Sumatera Selatan</span>
+        </div>
+        <div class="card-body">
+          <div class="card-title">Pempek Lenjer</div>
+          <div class="card-desc">Pempek panjang khas Palembang tanpa telur</div>
+          <div class="card-footer">
+            <span class="card-price">Rp 12.000</span>
+            <button class="btn-add" onclick="addToCart('Pempek Lenjer', 12000)">+ Keranjang</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card menu-item fade-in" data-cat="minuman">
+        <div class="card-img">
+          <img src="assets/es-dawet.webp" alt="Es Dawet Ayu"/>
+          <span class="card-region">Jawa Tengah</span>
+        </div>
+        <div class="card-body">
+          <div class="card-title">Es Dawet Ayu</div>
+          <div class="card-desc">Cendol, santan segar, gula merah, es batu</div>
+          <div class="card-footer">
+            <span class="card-price">Rp 12.000</span>
+            <button class="btn-add" onclick="addToCart('Es Dawet Ayu', 12000)">+ Keranjang</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card menu-item fade-in delay-1" data-cat="minuman">
+        <div class="card-img">
+          <img src="assets/kopi-aceh.webp" alt="Kopi Saring Aceh"/>
+          <span class="card-region">Aceh</span>
+        </div>
+        <div class="card-body">
+          <div class="card-title">Kopi Saring Aceh</div>
+          <div class="card-desc">Kopi robusta khas Aceh, disaring tradisional</div>
+          <div class="card-footer">
+            <span class="card-price">Rp 10.000</span>
+            <button class="btn-add" onclick="addToCart('Kopi Saring Aceh', 10000)">+ Keranjang</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card menu-item fade-in delay-2" data-cat="minuman">
+        <div class="card-img">
+          <img src="assets/jamu.webp" alt="Jamu Kunyit Asam"/>
+          <span class="card-region">Nasional</span>
+        </div>
+        <div class="card-body">
+          <div class="card-title">Jamu Kunyit Asam</div>
+          <div class="card-desc">Kunyit, asam jawa, gula merah, segar & sehat</div>
+          <div class="card-footer">
+            <span class="card-price">Rp 8.000</span>
+            <button class="btn-add" onclick="addToCart('Jamu Kunyit Asam', 8000)">+ Keranjang</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card menu-item fade-in delay-3" data-cat="minuman">
+        <div class="card-img">
+          <img src="assets/bandrek.webp" alt="Bandrek Hangat"/>
+          <span class="card-region">Jawa Barat</span>
+        </div>
+        <div class="card-body">
+          <div class="card-title">Bandrek Hangat</div>
+          <div class="card-desc">Jahe, serai, kayu manis, susu — minuman penghangat</div>
+          <div class="card-footer">
+            <span class="card-price">Rp 12.000</span>
+            <button class="btn-add" onclick="addToCart('Bandrek Hangat', 12000)">+ Keranjang</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- SECTION: Tabel Daftar Lengkap Menu -->
+<section class="section" style="background:white; padding-top:3rem; padding-bottom:4rem;">
+  <div class="container">
+    <div style="margin-bottom:2rem;">
+      <p class="section-label fade-in">✦ Rekap Lengkap</p>
+      <h2 class="section-title fade-in delay-1" style="margin-top:0.4rem">Daftar <em>Lengkap</em> Menu</h2>
+      <div class="divider fade-in delay-2"></div>
+      <p class="section-desc fade-in delay-2" style="margin-top:0.75rem;">
+        Semua pilihan menu dalam satu tabel lengkap. Klik tombol untuk menambah ke keranjang.
+      </p>
+    </div>
+
+    <!-- .menu-table-wrap: overflow-x:auto agar tabel bisa di-scroll di HP -->
+    <div class="menu-table-wrap fade-in">
+      <table class="menu-table">
+
+        <!-- Header tabel: judul tiap kolom -->
+        <thead>
+          <tr>
+            <th>No.</th>
+            <th>Nama Menu</th>
+            <th>Deskripsi</th>
+            <th>Kategori</th>
+            <th>Asal Daerah</th>
+            <th>Harga</th>
+            <th>Aksi</th>
+          </tr>
+        </thead>
+
+        <!-- Body tabel: satu <tr> = satu menu -->
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td><strong>Rendang Padang</strong></td>
+            <td>Daging sapi empuk, 40+ rempah pilihan</td>
+            <td class="td-kat"><span class="kat-berat">Makanan Berat</span></td>
+            <td>Sumatera Barat</td>
+            <td class="td-harga">Rp 45.000</td>
+            <td><button class="btn-add-tbl" onclick="addToCart('Rendang Padang', 45000)">+ Keranjang</button></td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td><strong>Pempek Kapal Selam</strong></td>
+            <td>Ikan tenggiri segar, telur, cuka khas</td>
+            <td class="td-kat"><span class="kat-berat">Makanan Berat</span></td>
+            <td>Sumatera Selatan</td>
+            <td class="td-harga">Rp 20.000</td>
+            <td><button class="btn-add-tbl" onclick="addToCart('Pempek Kapal Selam', 20000)">+ Keranjang</button></td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td><strong>Soto Betawi</strong></td>
+            <td>Kuah santan susu, daging sapi, tomat</td>
+            <td class="td-kat"><span class="kat-berat">Makanan Berat</span></td>
+            <td>Jakarta</td>
+            <td class="td-harga">Rp 35.000</td>
+            <td><button class="btn-add-tbl" onclick="addToCart('Soto Betawi', 35000)">+ Keranjang</button></td>
+          </tr>
+          <tr>
+            <td>4</td>
+            <td><strong>Nasi Liwet Solo</strong></td>
+            <td>Santan, opor ayam, serundeng, sambal</td>
+            <td class="td-kat"><span class="kat-berat">Makanan Berat</span></td>
+            <td>Jawa Tengah</td>
+            <td class="td-harga">Rp 28.000</td>
+            <td><button class="btn-add-tbl" onclick="addToCart('Nasi Liwet Solo', 28000)">+ Keranjang</button></td>
+          </tr>
+          <tr>
+            <td>5</td>
+            <td><strong>Bebek Betutu</strong></td>
+            <td>Base genep, daun pisang, panggang 8 jam</td>
+            <td class="td-kat"><span class="kat-berat">Makanan Berat</span></td>
+            <td>Bali</td>
+            <td class="td-harga">Rp 65.000</td>
+            <td><button class="btn-add-tbl" onclick="addToCart('Bebek Betutu', 65000)">+ Keranjang</button></td>
+          </tr>
+          <tr>
+            <td>6</td>
+            <td><strong>Ikan Kuah Kuning</strong></td>
+            <td>Kakap segar, kunyit, belimbing wuluh</td>
+            <td class="td-kat"><span class="kat-berat">Makanan Berat</span></td>
+            <td>Maluku</td>
+            <td class="td-harga">Rp 55.000</td>
+            <td><button class="btn-add-tbl" onclick="addToCart('Ikan Kuah Kuning', 55000)">+ Keranjang</button></td>
+          </tr>
+          <tr>
+            <td>7</td>
+            <td><strong>Coto Makassar</strong></td>
+            <td>Sup jeroan sapi, 40 rempah, ketupat buras</td>
+            <td class="td-kat"><span class="kat-berat">Makanan Berat</span></td>
+            <td>Sulawesi Selatan</td>
+            <td class="td-harga">Rp 38.000</td>
+            <td><button class="btn-add-tbl" onclick="addToCart('Coto Makassar', 38000)">+ Keranjang</button></td>
+          </tr>
+          <tr>
+            <td>8</td>
+            <td><strong>Gudeg Jogja</strong></td>
+            <td>Nangka muda, santan, gula jawa, opor</td>
+            <td class="td-kat"><span class="kat-berat">Makanan Berat</span></td>
+            <td>Yogyakarta</td>
+            <td class="td-harga">Rp 25.000</td>
+            <td><button class="btn-add-tbl" onclick="addToCart('Gudeg Jogja', 25000)">+ Keranjang</button></td>
+          </tr>
+          <tr>
+            <td>9</td>
+            <td><strong>Karedok Segar</strong></td>
+            <td>Sayur segar, bumbu kacang, terasi khas</td>
+            <td class="td-kat"><span class="kat-ringan">Makanan Ringan</span></td>
+            <td>Jawa Barat</td>
+            <td class="td-harga">Rp 18.000</td>
+            <td><button class="btn-add-tbl" onclick="addToCart('Karedok Segar', 18000)">+ Keranjang</button></td>
+          </tr>
+          <tr>
+            <td>10</td>
+            <td><strong>Martabak Manis</strong></td>
+            <td>Tebal, lembut, isi coklat keju dan kacang</td>
+            <td class="td-kat"><span class="kat-ringan">Makanan Ringan</span></td>
+            <td>Jawa Timur</td>
+            <td class="td-harga">Rp 22.000</td>
+            <td><button class="btn-add-tbl" onclick="addToCart('Martabak Manis', 22000)">+ Keranjang</button></td>
+          </tr>
+          <tr>
+            <td>11</td>
+            <td><strong>Klepon</strong></td>
+            <td>Bola ketan hijau isi gula merah, kelapa</td>
+            <td class="td-kat"><span class="kat-ringan">Makanan Ringan</span></td>
+            <td>Nasional</td>
+            <td class="td-harga">Rp 10.000</td>
+            <td><button class="btn-add-tbl" onclick="addToCart('Klepon', 10000)">+ Keranjang</button></td>
+          </tr>
+          <tr>
+            <td>12</td>
+            <td><strong>Pempek Lenjer</strong></td>
+            <td>Pempek panjang khas Palembang tanpa telur</td>
+            <td class="td-kat"><span class="kat-ringan">Makanan Ringan</span></td>
+            <td>Sumatera Selatan</td>
+            <td class="td-harga">Rp 12.000</td>
+            <td><button class="btn-add-tbl" onclick="addToCart('Pempek Lenjer', 12000)">+ Keranjang</button></td>
+          </tr>
+          <tr>
+            <td>13</td>
+            <td><strong>Es Dawet Ayu</strong></td>
+            <td>Cendol, santan segar, gula merah, es batu</td>
+            <td class="td-kat"><span class="kat-minuman">Minuman</span></td>
+            <td>Jawa Tengah</td>
+            <td class="td-harga">Rp 12.000</td>
+            <td><button class="btn-add-tbl" onclick="addToCart('Es Dawet Ayu', 12000)">+ Keranjang</button></td>
+          </tr>
+          <tr>
+            <td>14</td>
+            <td><strong>Kopi Saring Aceh</strong></td>
+            <td>Kopi robusta khas Aceh, disaring tradisional</td>
+            <td class="td-kat"><span class="kat-minuman">Minuman</span></td>
+            <td>Aceh</td>
+            <td class="td-harga">Rp 10.000</td>
+            <td><button class="btn-add-tbl" onclick="addToCart('Kopi Saring Aceh', 10000)">+ Keranjang</button></td>
+          </tr>
+          <tr>
+            <td>15</td>
+            <td><strong>Jamu Kunyit Asam</strong></td>
+            <td>Kunyit, asam jawa, gula merah, segar & sehat</td>
+            <td class="td-kat"><span class="kat-minuman">Minuman</span></td>
+            <td>Nasional</td>
+            <td class="td-harga">Rp 8.000</td>
+            <td><button class="btn-add-tbl" onclick="addToCart('Jamu Kunyit Asam', 8000)">+ Keranjang</button></td>
+          </tr>
+          <tr>
+            <td>16</td>
+            <td><strong>Bandrek Hangat</strong></td>
+            <td>Jahe, serai, kayu manis, susu — penghangat</td>
+            <td class="td-kat"><span class="kat-minuman">Minuman</span></td>
+            <td>Jawa Barat</td>
+            <td class="td-harga">Rp 12.000</td>
+            <td><button class="btn-add-tbl" onclick="addToCart('Bandrek Hangat', 12000)">+ Keranjang</button></td>
+          </tr>
+
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+
+<!-- CTA: lanjut ke pemesanan -->
+<section style="padding: 0 0 5rem; background: white;">
+  <div class="container">
+    <div style="text-align:center;" class="fade-in">
+      <p style="font-size:0.92rem; color:rgba(44,26,14,0.55); margin-bottom:1rem;">
+        Sudah pilih menu favorit? Lanjutkan ke halaman pemesanan.
+      </p>
+      <a href="pemesanan.html" class="btn btn-dark">Lanjut ke Pemesanan →</a>
+    </div>
+  </div>
+</section>
+
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.85rem;">
+          <div class="navbar-logo-icon">DN</div>
+          <div class="navbar-logo-text" style="color:var(--krim)">Dapur <span>Nusantara</span></div>
+        </div>
+        <p class="footer-text">Melestarikan kekayaan kuliner Indonesia dengan cinta dan dedikasi sejak 2015.</p>
+        <div style="display:flex; gap:0.5rem; margin-top:1rem;">
+          <span class="tag tag-solid-rempah">Halal MUI</span>
+        </div>
+      </div>
+      <div>
+        <div class="footer-title">Halaman</div>
+        <div class="footer-links">
+          <a href="index.html">Beranda</a>
+          <a href="profil.html">Profil UMKM</a>
+          <a href="makanan-khas.html">Makanan Khas</a>
+          <a href="menu.html">Menu</a>
+          <a href="pemesanan.html">Pemesanan</a>
+          <a href="kontak.html">Kontak</a>
+        </div>
+      </div>
+      <div>
+        <div class="footer-title">Jam Operasional</div>
+        <p class="footer-text">Senin - Jumat: 07.00 - 20.00<br/>Sabtu: 07.00 - 17.00<br/>Minggu: Tutup</p>
+        <div style="margin-top:1rem;">
+          <div class="footer-title">Kontak</div>
+          <p class="footer-text">📞 0812-3456-7890<br/>📍 Tanjung Enim, Sumatera Selatan</p>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2026 Dapur Nusantara. Dibuat untuk melestarikan kuliner Indonesia.</p>
+      <p>Praktikum Pemrograman Web - Davin Gabriel J</p>
+    </div>
+  </div>
+</footer>
+
+<!-- .toast dibuat otomatis oleh JS jika belum ada, tapi lebih baik disiapkan di HTML -->
+<div class="toast"></div>
+<script src="js/main.js"></script>
+</body>
+</html>
