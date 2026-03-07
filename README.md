@@ -6,7 +6,7 @@ Website profil UMKM kuliner sederhana yang dibangun sebagai project **UTS Prakti
 
 ## 📋 Deskripsi
 
-Website ini merupakan representasi digitalisasi dari sebuah UMKM di bidang kuliner. Menampilkan informasi usaha, daftar menu makanan, makanan khas, form pemesanan, hingga halaman kontak.
+Website ini merupakan digitalisasi dari sebuah UMKM di bidang kuliner. Menampilkan informasi usaha, daftar menu makanan, makanan khas, form pemesanan, hingga halaman kontak.
 Semuanya dalam tampilan yang ringan dan mudah diakses.
 
 ---
