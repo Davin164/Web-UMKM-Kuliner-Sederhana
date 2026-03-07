@@ -11,7 +11,7 @@ Semuanya dalam tampilan yang ringan dan mudah diakses.
 
 ---
 
-## 🗂️ Struktur Halaman
+## 🗂️ Struktur Halaman Website
 
 | Halaman | File | Deskripsi |
 |---|---|---|
