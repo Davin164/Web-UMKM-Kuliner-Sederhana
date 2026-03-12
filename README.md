@@ -1,4 +1,4 @@
-# 🍽️ Web Profil UMKM Kuliner Sederhana
+# 🍽️ Web UMKM Kuliner Sederhana
 
 Website profil UMKM kuliner sederhana yang dibangun sebagai project **UTS Praktikum Pemrograman Website**.
 
