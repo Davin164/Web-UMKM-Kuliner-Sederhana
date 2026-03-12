@@ -68,4 +68,4 @@ Web-UMKM-Kuliner-Sederhana/
 
 ## 📝 Lisensi
 
-Project ini dibuat untuk keperluan tugas akademik (UTS Praktikum Pemrograman Website) dan dapat dikembangkan lagi untuk keperluan public atau pribadi UMKM.
+Project ini dibuat untuk keperluan tugas akademik (UTS Praktikum Pemrograman Website) dan dapat dikembangkan lagi dengan framework atau library lain untuk keperluan public atau pribadi UMKM.
